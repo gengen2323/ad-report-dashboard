@@ -41,7 +41,19 @@
   @media(max-width:768px) { .chart-row{grid-template-columns:1fr;} .kpi-grid{grid-template-columns:repeat(2,1fr);} }
 </style>
 </head>
-<body>
+<body><div id="lockScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#f8fafc;z-index:99999;display:flex;align-items:center;justify-content:center;">
+<div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:40px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08);max-width:400px;">
+<div style="font-size:40px;margin-bottom:16px;">🔒</div>
+<h2 style="font-size:20px;color:#1e293b;margin-bottom:8px;">レポート閲覧認証</h2>
+<p style="font-size:13px;color:#94a3b8;margin-bottom:20px;">パスワードを入力してください</p>
+<input id="pwInput" type="password" placeholder="パスワード" style="width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:16px;outline:none;margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkPw()">
+<button onclick="checkPw()" style="width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">認証</button>
+<p id="pwError" style="color:#dc2626;font-size:12px;margin-top:8px;display:none;">パスワードが違います</p>
+</div></div>
+<script>
+function checkPw(){var p=document.getElementById("pwInput").value;if(p==="CA"){document.getElementById("lockScreen").style.display="none";document.body.style.overflow="auto";}else{document.getElementById("pwError").style.display="block";document.getElementById("pwInput").value="";document.getElementById("pwInput").focus();}}
+document.body.style.overflow="hidden";
+</script>
 <div class="header">
   <h1>Airペイ × YDA パフォーマンスレポート</h1>
   <p>データ期間: 2026-03-01 〜 2026-04-05 | 媒体: YDA (Yahoo!ディスプレイ) | 生成: 2026-04-07 20:57</p>
