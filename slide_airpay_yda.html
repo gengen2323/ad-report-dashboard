@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Airペイ × YDA レポート</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f8fafc;color:#1e293b;overflow:hidden;height:100vh;}
+.slide-container{height:100vh;overflow:hidden;position:relative;}
+.slide{height:100vh;width:100%;display:none;flex-direction:column;justify-content:center;padding:40px 56px;position:relative;overflow:hidden;}
+.slide.active{display:flex;}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-top:1px solid #e2e8f0;padding:10px 32px;display:flex;align-items:center;justify-content:space-between;}
+.nav-dots{display:flex;gap:8px;}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;cursor:pointer;transition:all .3s;}
+.nav-dot.active{background:#2563eb;width:28px;border-radius:5px;}
+.nav-btn{background:#e2e8f0;border:none;color:#475569;width:40px;height:40px;border-radius:10px;cursor:pointer;font-size:18px;transition:all .2s;}
+.nav-btn:hover{background:#2563eb;color:#fff;}
+.page-num{color:#94a3b8;font-size:13px;}
+.slide-cover{background:linear-gradient(135deg,#eff6ff,#f8fafc 50%,#f0f9ff);justify-content:center;align-items:center;text-align:center;}
+.slide-cover h1{font-size:48px;font-weight:700;background:linear-gradient(135deg,#2563eb,#1d4ed8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
+.slide-cover .sub{font-size:20px;color:#64748b;margin-bottom:32px;}
+.slide-cover .meta{font-size:14px;color:#94a3b8;display:flex;gap:24px;justify-content:center;}
+.stitle{font-size:24px;font-weight:700;margin-bottom:20px;color:#0f172a;display:flex;align-items:center;gap:10px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:16px 0;}
+.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px 18px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.kpi .label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.kpi .val{font-size:28px;font-weight:700;color:#1e293b;}
+.kpi .val.blue{color:#2563eb;}
+.kpi .val.green{color:#16a34a;}
+.kpi .val.amber{color:#d97706;}
+.kpi .val.red{color:#dc2626;}
+.tbl-wrap{overflow:auto;border-radius:10px;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;}
+th{background:#f1f5f9;padding:10px 12px;text-align:left;font-weight:600;color:#64748b;font-size:11px;text-transform:uppercase;white-space:nowrap;}
+td{padding:9px 12px;border-top:1px solid #f1f5f9;white-space:nowrap;color:#334155;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;}
+tr:hover{background:#f0f9ff;}
+.rank{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;font-weight:700;font-size:11px;}
+.rank-1{background:#fef9c3;color:#a16207;} .rank-2{background:#f1f5f9;color:#64748b;} .rank-3{background:#fed7aa;color:#c2410c;} .rank-n{background:#f8fafc;color:#94a3b8;}
+.insight-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px;}
+.insight{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.insight .tag{font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:700;}
+.insight .tag.good{color:#16a34a;} .insight .tag.warn{color:#d97706;} .insight .tag.action{color:#2563eb;}
+.insight p{font-size:13px;line-height:1.6;color:#475569;}
+</style></head>
+<body><div class="slide-container">
+
+<!-- COVER -->
+<div class="slide slide-cover active" data-idx="0">
+  <h1>Airペイ × YDA</h1>
+  <div class="sub">パフォーマンスレポート</div>
+  <div class="meta"><span>📅 2026-03-15 〜 2026-04-05（直近3週間）</span></div>
+</div>
+
+<!-- KPI -->
+<div class="slide" data-idx="1">
+  <div class="stitle">📊 直近3週間 KPIサマリ <span class="badge" style="background:#dbeafe;color:#2563eb;">CV = 申込完了</span></div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="label">費用</div><div class="val blue">¥824,865</div></div>
+    <div class="kpi"><div class="label">IMP</div><div class="val">5,645,965</div></div>
+    <div class="kpi"><div class="label">Click</div><div class="val">6,445</div></div>
+    <div class="kpi"><div class="label">CTR</div><div class="val amber">0.11%</div></div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="label">CPC</div><div class="val">¥128</div></div>
+    <div class="kpi"><div class="label">CV</div><div class="val green">21</div></div>
+    <div class="kpi"><div class="label">CPA</div><div class="val red">¥39,279</div></div>
+    <div class="kpi"><div class="label">CVR</div><div class="val amber">0.33%</div></div>
+  </div>
+  <div style="margin-top:12px;display:flex;gap:10px;">
+    <span class="badge" style="background:#dbeafe;color:#2563eb;">3ヶ月: CV39 / CPA ¥43,003</span>
+    <span class="badge" style="background:#dcfce7;color:#16a34a;">3W: CPA ¥39,279 / CVR 0.33%</span>
+  </div>
+</div>
+
+<!-- TARGET vs ACTUAL -->
+<div class="slide" data-idx="2">
+  <div class="stitle">🎯 目標 vs 実績（当月進捗） <span class="badge" style="background:#dbeafe;color:#2563eb;">04月 5日経過</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;">
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">費用</div>
+      <div style="position:relative;width:140px;height:140px;margin:12px auto;">
+        <svg viewBox="0 0 160 160" style="transform:rotate(-90deg);"><circle cx="80" cy="80" r="70" fill="none" stroke="#f1f5f9" stroke-width="12"/><circle cx="80" cy="80" r="70" fill="none" stroke="#d97706" stroke-width="12" stroke-dasharray="440" stroke-dashoffset="348" stroke-linecap="round"/></svg>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"><div style="font-size:24px;font-weight:700;color:#d97706;">21%</div><div style="font-size:10px;color:#94a3b8;">消化率</div></div>
+      </div>
+      <div style="font-size:18px;font-weight:700;">¥207,650</div>
+      <div style="font-size:11px;color:#94a3b8;">目標: ¥1,000,000 / 月</div>
+      <div style="margin-top:6px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;background:#fef3c7;color:#d97706;display:inline-block;">着地¥1,245,898</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">CV</div>
+      <div style="position:relative;width:140px;height:140px;margin:12px auto;">
+        <svg viewBox="0 0 160 160" style="transform:rotate(-90deg);"><circle cx="80" cy="80" r="70" fill="none" stroke="#f1f5f9" stroke-width="12"/><circle cx="80" cy="80" r="70" fill="none" stroke="#16a34a" stroke-width="12" stroke-dasharray="440" stroke-dashoffset="355" stroke-linecap="round"/></svg>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"><div style="font-size:24px;font-weight:700;color:#16a34a;">19%</div><div style="font-size:10px;color:#94a3b8;">達成率</div></div>
+      </div>
+      <div style="font-size:18px;font-weight:700;">5件</div>
+      <div style="font-size:11px;color:#94a3b8;">目標: 26件 / 月</div>
+      <div style="margin-top:6px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;background:#dcfce7;color:#16a34a;display:inline-block;">着地30件見込</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">CPA</div>
+      <div style="position:relative;width:140px;height:140px;margin:12px auto;">
+        <svg viewBox="0 0 160 160" style="transform:rotate(-90deg);"><circle cx="80" cy="80" r="70" fill="none" stroke="#f1f5f9" stroke-width="12"/><circle cx="80" cy="80" r="70" fill="none" stroke="#d97706" stroke-width="12" stroke-dasharray="440" stroke-dashoffset="0" stroke-linecap="round"/></svg>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);"><div style="font-size:20px;font-weight:700;color:#d97706;">¥41,530</div><div style="font-size:10px;color:#94a3b8;">実績CPA</div></div>
+      </div>
+      <div style="font-size:14px;color:#94a3b8;">目標: <strong style="color:#1e293b;">¥38,461</strong></div>
+      <div style="margin-top:6px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;background:#fee2e2;color:#dc2626;display:inline-block;">目標比 +8.0%</div>
+    </div>
+  </div>
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+    <div style="background:#eff6ff;border-radius:8px;padding:12px;font-size:11px;color:#1e40af;"><strong>💰 費用:</strong> 5日で21%消化。月末着地¥1,245,898見込。入札抑制検討。</div>
+    <div style="background:#f0fdf4;border-radius:8px;padding:12px;font-size:11px;color:#166534;"><strong>📈 CV:</strong> 日平均1.0件。着地30件見込。目標26件に対して達成圏内。</div>
+    <div style="background:#fef2f2;border-radius:8px;padding:12px;font-size:11px;color:#991b1b;"><strong>⚡ CPA:</strong> 実績CPA ¥41,530は目標¥38,461比+8.0%。CPA高騰中。低効率キャンペーンの見直しが必要。</div>
+  </div>
+</div>
+
+<!-- CAMPAIGN -->
+<div class="slide" data-idx="3">
+  <div class="stitle">🎯 キャンペーン別 Top5</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>キャンペーン</th><th style="text-align:right">費用</th><th style="text-align:right">Click</th><th style="text-align:right">CV</th><th style="text-align:right">CPA</th><th style="text-align:right">CVR</th></tr></thead>
+    <tbody><tr><td><span class="rank rank-1">1</span></td><td title="【2603】YDA_SPTB_RTG[002日-540日]_LINE面_申込">【2603】YDA_SPTB_RTG[002日-540日]_LINE面_申込</td><td class="num">¥117,635</td><td class="num">216</td><td class="num">2</td><td class="num">¥58,818</td><td class="num">0.93%</td></tr><tr><td><span class="rank rank-2">2</span></td><td title="【2603】YDA_SPTB_NonRTG_LINE面_申込">【2603】YDA_SPTB_NonRTG_LINE面_申込</td><td class="num">¥110,750</td><td class="num">1,289</td><td class="num">1</td><td class="num">¥110,750</td><td class="num">0.08%</td></tr><tr><td><span class="rank rank-3">3</span></td><td title="【2503】YDA_SPTB_NonRTG_BP以外_申込">【2503】YDA_SPTB_NonRTG_BP以外_申込</td><td class="num">¥107,259</td><td class="num">1,776</td><td class="num">2</td><td class="num">¥53,630</td><td class="num">0.11%</td></tr><tr><td><span class="rank rank-n">4</span></td><td title="【2503】YDA_PC_NonRTG_BP以外_申込">【2503】YDA_PC_NonRTG_BP以外_申込</td><td class="num">¥103,640</td><td class="num">884</td><td class="num">-</td><td class="num">-</td><td class="num">-</td></tr><tr><td><span class="rank rank-n">5</span></td><td title="【2503】YDA_SPTB_RTG[002日-540日]_BP以外_申込">【2503】YDA_SPTB_RTG[002日-540日]_BP以外_申込</td><td class="num">¥75,620</td><td class="num">636</td><td class="num">2</td><td class="num">¥37,810</td><td class="num">0.31%</td></tr></tbody>
+  </table></div>
+</div>
+
+<!-- ADGROUP -->
+<div class="slide" data-idx="4">
+  <div class="stitle">📁 アドグループ別 Top5</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>アドグループ</th><th style="text-align:right">費用</th><th style="text-align:right">Click</th><th style="text-align:right">CV</th><th style="text-align:right">CPA</th><th style="text-align:right">CVR</th></tr></thead>
+    <tbody><tr><td><span class="rank rank-1">1</span></td><td title="【2603】YDA_SPTB_RTG[002日-540日]_BP以外_申込■SPTB_RTG_OS全_W/A_性全_18歳＋_申し込みフォーム_002日-007日_LINE面_1200×628">【2603】YDA_SPTB_RTG[002日-540日]_BP以外_申込■SPTB_RTG_OS全_W...</td><td class="num">¥113,835</td><td class="num">206</td><td class="num">2</td><td class="num">¥56,917</td><td class="num">0.97%</td></tr><tr><td><span class="rank rank-2">2</span></td><td title="【2603】YDA_SPTB_RTG[001日]_BP以外_申込■SPTB_RTG_OS全_W/A_性全_18歳＋_申し込みフォーム_001日_LINE面_1200×628">【2603】YDA_SPTB_RTG[001日]_BP以外_申込■SPTB_RTG_OS全_W/A_性全...</td><td class="num">¥61,372</td><td class="num">73</td><td class="num">1</td><td class="num">¥61,372</td><td class="num">1.37%</td></tr><tr><td><span class="rank rank-3">3</span></td><td title="【2503】YDA_SPTB_RTG[002日-540日]_BP以外_申込■SPTB_RTG_OS全_W/A_性全_18歳＋_申し込みフォーム_002日-007日_Y面_1200×628">【2503】YDA_SPTB_RTG[002日-540日]_BP以外_申込■SPTB_RTG_OS全_W...</td><td class="num">¥46,322</td><td class="num">480</td><td class="num">1</td><td class="num">¥46,322</td><td class="num">0.21%</td></tr><tr><td><span class="rank rank-n">4</span></td><td title="【2603】YDA_SPTB_NonRTG_BP以外_申込■SPTB_ADclick_OS全_W/A_性全_18歳＋_ADクリッカー_LINE面_1200×628">【2603】YDA_SPTB_NonRTG_BP以外_申込■SPTB_ADclick_OS全_W/A_性...</td><td class="num">¥43,558</td><td class="num">440</td><td class="num">-</td><td class="num">-</td><td class="num">-</td></tr><tr><td><span class="rank rank-n">5</span></td><td title="【2503】YDA_SPTB_NonRTG_BP_申込■SPTB_STG_OS全_W/A_性全_18歳＋_指名_SPBP_640×360">【2503】YDA_SPTB_NonRTG_BP_申込■SPTB_STG_OS全_W/A_性全_18歳＋...</td><td class="num">¥42,388</td><td class="num">343</td><td class="num">-</td><td class="num">-</td><td class="num">-</td></tr></tbody>
+  </table></div>
+</div>
+
+<!-- 4-QUADRANT -->
+<div class="slide" data-idx="5">
+  <div class="stitle">🎨 クリエイティブ 4象限分析 <span class="badge" style="background:#dbeafe;color:#2563eb;">中央値CPA ¥27,581</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;flex:1;min-height:0;">
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px;overflow-y:auto;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><span style="font-size:18px;">🏆</span><div><div style="font-size:13px;font-weight:700;color:#16a34a;">Winner</div><div style="font-size:9px;color:#64748b;">高コスト × 低CPA</div></div><span class="badge" style="background:#dcfce7;color:#16a34a;margin-left:auto;">6件</span></div>
+      <div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.dev.opelake.com/1002731813/image/18821231" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">A_3_600x600.png</div>
+              <div style="font-size:10px;color:#16a34a;">¥49,882 / CV2 / CPA ¥24,941 / CVR 0.87%</div></div></div><div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.dev.opelake.com/1002731813/image/18821234" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">A_2_600x600.png</div>
+              <div style="font-size:10px;color:#16a34a;">¥39,679 / CV3 / CPA ¥13,226 / CVR 1.49%</div></div></div><div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.dev.opelake.com/1002731813/image/19265230" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">250806_AirPAY_640_360_YDA_kiwami_02.jpg</div>
+              <div style="font-size:10px;color:#16a34a;">¥27,581 / CV1 / CPA ¥27,581 / CVR 0.47%</div></div></div>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:14px;overflow-y:auto;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><span style="font-size:18px;">⚠️</span><div><div style="font-size:13px;font-weight:700;color:#d97706;">要改善</div><div style="font-size:9px;color:#64748b;">高コスト × 高CPA</div></div><span class="badge" style="background:#fef3c7;color:#d97706;margin-left:auto;">14件</span></div>
+      <div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.dev.opelake.com/1002731813/image/18821238" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">A_3_1200x628.png</div>
+              <div style="font-size:10px;color:#d97706;">¥114,814 / CV4 / CPA ¥28,703 / CVR 0.58%</div></div></div><div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.dev.opelake.com/1002731813/image/19266412" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">250806_AirPAY_1200_628_YDA_kiwami_02.jpg</div>
+              <div style="font-size:10px;color:#d97706;">¥102,364 / CV1 / CPA ¥102,364 / CVR 0.24%</div></div></div><div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.dev.opelake.com/1002731813/image/19266397" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">250820_AirPAY_1200_628_YDA_kiwami_02.jpg</div>
+              <div style="font-size:10px;color:#d97706;">¥86,984 / CV2 / CPA ¥43,492 / CVR 0.25%</div></div></div>
+    </div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px;overflow-y:auto;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><span style="font-size:18px;">💎</span><div><div style="font-size:13px;font-weight:700;color:#2563eb;">隠れ優良</div><div style="font-size:9px;color:#64748b;">低コスト × 低CPA</div></div><span class="badge" style="background:#dbeafe;color:#2563eb;margin-left:auto;">0件</span></div>
+      
+    </div>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px;overflow-y:auto;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><span style="font-size:18px;">✂️</span><div><div style="font-size:13px;font-weight:700;color:#dc2626;">停止検討</div><div style="font-size:9px;color:#64748b;">低コスト × CV無/高CPA</div></div><span class="badge" style="background:#fee2e2;color:#dc2626;margin-left:auto;">19件</span></div>
+      <div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.opelake.com/1002731813/image/19953177" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">260113BfXiDdLkS_260113_AirPAY_1080×1080_YD...</div>
+              <div style="font-size:10px;color:#dc2626;">¥5,139 / CV- / CPA - / CVR -</div></div></div><div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.dev.opelake.com/1002731813/image/19266406" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">250806_AirPAY_600_600_YDA_kiwami_01.jpg</div>
+              <div style="font-size:10px;color:#dc2626;">¥4,763 / CV- / CPA - / CVR -</div></div></div><div style="display:flex;gap:8px;align-items:center;background:#f8fafc;border-radius:8px;padding:7px;">
+              <img src="https://media-yahoo-display.dev.opelake.com/1002731813/image/19988532" style="width:50px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"><div style="flex:1;min-width:0;"><div style="font-size:11px;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ipadcpn_640x360_260121_YDA_new.jpg</div>
+              <div style="font-size:10px;color:#dc2626;">¥4,718 / CV- / CPA - / CVR -</div></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+<div class="nav-bar"><div class="nav-dots" id="dots"></div><div class="page-num" id="pn">1/6</div><div style="display:flex;gap:10px;"><button class="nav-btn" onclick="go(-1)">&#8592;</button><button class="nav-btn" onclick="go(1)">&#8594;</button></div></div>
+<script>
+const ss=document.querySelectorAll('.slide');let cur=0;
+function show(n){cur=Math.max(0,Math.min(n,ss.length-1));ss.forEach(s=>s.classList.remove('active'));ss[cur].classList.add('active');document.querySelectorAll('.nav-dot').forEach((d,i)=>d.classList.toggle('active',i===cur));document.getElementById('pn').textContent=(cur+1)+'/'+ss.length;}
+function go(d){show(cur+d);}
+const de=document.getElementById('dots');ss.forEach((_,i)=>{const d=document.createElement('div');d.className='nav-dot'+(i===0?' active':'');d.onclick=()=>show(i);de.appendChild(d);});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(1);if(e.key==='ArrowLeft')go(-1);});
+</script></body></html>

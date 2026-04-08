@@ -1,0 +1,8 @@
+*.csv
+!targets.csv
+Lib/
+Scripts/
+__pycache__/
+_*.txt
+_*.json
+*.pyc

@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWE ロコモア × YDA レポート</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root { --primary:#db4437; --primary-dark:#b33629; --success:#0f9d58; --warning:#f4b400; --danger:#db4437; --bg:#f8f9fa; --card-bg:#fff; --text:#202124; --text2:#5f6368; --border:#e0e0e0; }
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { font-family:'Segoe UI','Hiragino Kaku Gothic ProN','Meiryo',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  .header { background:linear-gradient(135deg,#db4437,#b33629); color:#fff; padding:28px 32px; }
+  .header h1 { font-size:22px; font-weight:600; }
+  .header p { opacity:0.85; font-size:13px; margin-top:4px; }
+  .container { max-width:1400px; margin:0 auto; padding:20px; }
+  .nav { position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:6px;flex-wrap:wrap;box-shadow:0 2px 4px rgba(0,0,0,0.06); }
+  .nav a { text-decoration:none;color:var(--text2);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap; }
+  .nav a:hover,.nav a.active { background:var(--primary);color:#fff; }
+  .kpi-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:16px 0; }
+  .kpi-card { background:var(--card-bg);border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.08);text-align:center; }
+  .kpi-card .label { font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px; }
+  .kpi-card .value { font-size:20px;font-weight:700;margin-top:4px;color:var(--primary); }
+  .kpi-card .sub { font-size:11px;color:var(--text2);margin-top:2px; }
+  .section { margin:28px 0; }
+  .section h2 { font-size:17px;font-weight:600;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--primary); }
+  .chart-row { display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px;margin:14px 0; }
+  .chart-card { background:var(--card-bg);border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  .chart-card h3 { font-size:13px;color:var(--text2);margin-bottom:10px; }
+  .chart-card canvas { max-height:300px; }
+  table { width:100%;border-collapse:collapse;font-size:12px;background:var(--card-bg);border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  th { background:#f1f3f4;padding:9px 7px;text-align:left;font-weight:600;font-size:11px;color:var(--text2);position:sticky;top:0;white-space:nowrap; }
+  td { padding:7px;border-top:1px solid #f1f3f4;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  td.num { text-align:right;font-variant-numeric:tabular-nums; }
+  tr:hover { background:#f8f9ff; }
+  .table-wrap { overflow-x:auto;max-height:520px;overflow-y:auto;border-radius:8px; }
+  .tab-btns { display:flex;gap:4px;margin-bottom:10px; }
+  .tab-btn { padding:7px 14px;border:1px solid var(--border);background:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s; }
+  .tab-btn.active { background:var(--primary);color:#fff;border-color:var(--primary); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  @media(max-width:768px) { .chart-row{grid-template-columns:1fr;} .kpi-grid{grid-template-columns:repeat(2,1fr);} }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>SWE ロコモア × YDA パフォーマンスレポート</h1>
+  <p>データ期間: 2026-03-01 〜 2026-04-05 | 媒体: YDA (Yahoo!ディスプレイ) | 生成: 2026-04-07 20:57</p>
+</div>
+<nav class="nav">
+  <a href="#summary" class="active">サマリ</a><a href="#monthly">月別</a><a href="#daily">日別</a>
+  <a href="#campaign">キャンペーン</a><a href="#adgroup">アドグループ</a><a href="#ad">アド</a>
+  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a>
+</nav>
+<div class="container">
+
+<!-- SUMMARY -->
+<section id="summary" class="section">
+  <h2>📊 全体サマリ</h2>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">直近3ヶ月 (YDA)</p>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="label">総費用</div><div class="value">¥4,506,159</div><div class="sub">3ヶ月</div></div>
+    <div class="kpi-card"><div class="label">IMP</div><div class="value">25,448,010</div></div>
+    <div class="kpi-card"><div class="label">Click</div><div class="value">42,776</div></div>
+    <div class="kpi-card"><div class="label">CTR</div><div class="value">0.17%</div></div>
+    <div class="kpi-card"><div class="label">CPC</div><div class="value">¥105</div></div>
+    <div class="kpi-card"><div class="label">CV</div><div class="value">460.0</div></div>
+    <div class="kpi-card"><div class="label">CPA</div><div class="value">¥9,796</div></div>
+    <div class="kpi-card"><div class="label">CPM</div><div class="value">¥177</div></div>
+  </div>
+  <p style="font-size:12px;color:var(--text2);margin:12px 0 8px;">直近3週間</p>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="label">費用(3W)</div><div class="value">¥2,618,750</div></div>
+    <div class="kpi-card"><div class="label">IMP(3W)</div><div class="value">13,228,977</div></div>
+    <div class="kpi-card"><div class="label">Click(3W)</div><div class="value">24,237</div></div>
+    <div class="kpi-card"><div class="label">CV(3W)</div><div class="value">263.0</div></div>
+    <div class="kpi-card"><div class="label">CPA(3W)</div><div class="value">¥9,957</div></div>
+    <div class="kpi-card"><div class="label">CTR(3W)</div><div class="value">0.18%</div></div>
+  </div>
+</section>
+
+<!-- MONTHLY -->
+<section id="monthly" class="section">
+  <h2>📅 月別推移</h2>
+  <div class="chart-row">
+    <div class="chart-card"><h3>費用 & CV数</h3><canvas id="mChart1"></canvas></div>
+    <div class="chart-card"><h3>CPA推移</h3><canvas id="mChart2"></canvas></div>
+  </div>
+</section>
+
+<!-- DAILY -->
+<section id="daily" class="section">
+  <h2>📈 日別推移（直近3週間）</h2>
+  <div class="chart-row">
+    <div class="chart-card"><h3>費用 & クリック</h3><canvas id="dChart1"></canvas></div>
+    <div class="chart-card"><h3>CV & CPA</h3><canvas id="dChart2"></canvas></div>
+  </div>
+</section>
+
+<!-- CAMPAIGN -->
+<section id="campaign" class="section">
+  <h2>🎯 キャンペーン別（直近3週間）</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>キャンペーン名</th><th>費用</th><th>IMP</th><th>Click</th><th>CTR</th><th>CPC</th><th>CV</th><th>CPA</th></tr></thead>
+    <tbody><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥608,443</td><td class="num">2,244,078</td>
+          <td class="num">5,796</td><td class="num">0.26%</td>
+          <td class="num">¥105</td><td class="num">46.0</td>
+          <td class="num">¥13,227</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥351,838</td><td class="num">2,022,230</td>
+          <td class="num">4,442</td><td class="num">0.22%</td>
+          <td class="num">¥79</td><td class="num">32.0</td>
+          <td class="num">¥10,995</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥268,782</td><td class="num">793,493</td>
+          <td class="num">2,928</td><td class="num">0.37%</td>
+          <td class="num">¥92</td><td class="num">22.0</td>
+          <td class="num">¥12,217</td></tr><tr>
+          <td title="CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL">CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL</td>
+          <td class="num">¥208,634</td><td class="num">354,670</td>
+          <td class="num">709</td><td class="num">0.20%</td>
+          <td class="num">¥294</td><td class="num">17.0</td>
+          <td class="num">¥12,273</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥202,748</td><td class="num">920,241</td>
+          <td class="num">935</td><td class="num">0.10%</td>
+          <td class="num">¥217</td><td class="num">32.0</td>
+          <td class="num">¥6,336</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT_スマタゲ">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT_スマタゲ</td>
+          <td class="num">¥190,768</td><td class="num">1,463,326</td>
+          <td class="num">2,068</td><td class="num">0.14%</td>
+          <td class="num">¥92</td><td class="num">12.0</td>
+          <td class="num">¥15,897</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP_スマタゲ">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP_スマタゲ</td>
+          <td class="num">¥177,691</td><td class="num">340,872</td>
+          <td class="num">1,367</td><td class="num">0.40%</td>
+          <td class="num">¥130</td><td class="num">18.0</td>
+          <td class="num">¥9,872</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥139,125</td><td class="num">1,048,784</td>
+          <td class="num">766</td><td class="num">0.07%</td>
+          <td class="num">¥182</td><td class="num">18.0</td>
+          <td class="num">¥7,729</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_PC-BP">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_PC-BP</td>
+          <td class="num">¥102,951</td><td class="num">92,326</td>
+          <td class="num">180</td><td class="num">0.19%</td>
+          <td class="num">¥572</td><td class="num">17.0</td>
+          <td class="num">¥6,056</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥95,001</td><td class="num">1,362,853</td>
+          <td class="num">1,593</td><td class="num">0.12%</td>
+          <td class="num">¥60</td><td class="num">8.0</td>
+          <td class="num">¥11,875</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥84,793</td><td class="num">1,489,291</td>
+          <td class="num">1,098</td><td class="num">0.07%</td>
+          <td class="num">¥77</td><td class="num">6.0</td>
+          <td class="num">¥14,132</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP</td>
+          <td class="num">¥69,538</td><td class="num">30,575</td>
+          <td class="num">280</td><td class="num">0.92%</td>
+          <td class="num">¥248</td><td class="num">15.0</td>
+          <td class="num">¥4,636</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_SP-BP">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_SP-BP</td>
+          <td class="num">¥46,811</td><td class="num">29,069</td>
+          <td class="num">181</td><td class="num">0.62%</td>
+          <td class="num">¥259</td><td class="num">8.0</td>
+          <td class="num">¥5,851</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_PC_OS全_商品_50ALL_PC-BP">CA_恒常_lcmr_有2_ADCLICK_性全_PC_OS全_商品_50ALL_PC-BP</td>
+          <td class="num">¥33,903</td><td class="num">48,579</td>
+          <td class="num">93</td><td class="num">0.19%</td>
+          <td class="num">¥365</td><td class="num">9.0</td>
+          <td class="num">¥3,767</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_高度なセグメント_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥23,230</td><td class="num">602,564</td>
+          <td class="num">686</td><td class="num">0.11%</td>
+          <td class="num">¥34</td><td class="num">3.0</td>
+          <td class="num">¥7,743</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥8,965</td><td class="num">222,596</td>
+          <td class="num">650</td><td class="num">0.29%</td>
+          <td class="num">¥14</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_筋柔軟性_50ALL_複数FMT">CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_筋柔軟性_50ALL_複数FMT</td>
+          <td class="num">¥5,528</td><td class="num">163,430</td>
+          <td class="num">465</td><td class="num">0.28%</td>
+          <td class="num">¥12</td><td class="num">-</td>
+          <td class="num">-</td></tr></tbody>
+  </table></div>
+</section>
+
+<!-- ADGROUP -->
+<section id="adgroup" class="section">
+  <h2>📁 アドグループ別（直近3週間）</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>キャンペーン</th><th>アドグループ</th><th>費用</th><th>IMP</th><th>Click</th><th>CTR</th><th>CV</th><th>CPA</th></tr></thead>
+    <tbody><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1200x628</td>
+          <td class="num">¥291,126</td><td class="num">546,440</td>
+          <td class="num">2,091</td><td class="num">0.38%</td>
+          <td class="num">33.0</td><td class="num">¥8,822</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系__LINE面_Res_1200x628</td>
+          <td class="num">¥190,604</td><td class="num">434,930</td>
+          <td class="num">1,865</td><td class="num">0.43%</td>
+          <td class="num">20.0</td><td class="num">¥9,530</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP_スマタゲ">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP...</td>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP-BP静止画_640x360_スマタゲ">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP-BP静止画_640x360_...</td>
+          <td class="num">¥176,062</td><td class="num">339,342</td>
+          <td class="num">1,359</td><td class="num">0.40%</td>
+          <td class="num">17.0</td><td class="num">¥10,357</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT_スマタゲ">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT...</td>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628_スマタゲ">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628_スマタゲ</td>
+          <td class="num">¥170,432</td><td class="num">1,111,299</td>
+          <td class="num">1,885</td><td class="num">0.17%</td>
+          <td class="num">10.0</td><td class="num">¥17,043</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner_600x500">50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner_600x500</td>
+          <td class="num">¥138,904</td><td class="num">1,420,198</td>
+          <td class="num">2,393</td><td class="num">0.17%</td>
+          <td class="num">11.0</td><td class="num">¥12,628</td></tr><tr>
+          <td title="CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL">CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL</td>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_Y面_Res_1200x628</td>
+          <td class="num">¥123,191</td><td class="num">228,589</td>
+          <td class="num">567</td><td class="num">0.25%</td>
+          <td class="num">9.0</td><td class="num">¥13,688</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_PC-BP">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_PC-BP</td>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_BP面_PC-BP静止画_600x600">50ALL_性全_PC_OS全_W/A_指名系_-_BP面_PC-BP静止画_600x600</td>
+          <td class="num">¥102,951</td><td class="num">92,326</td>
+          <td class="num">180</td><td class="num">0.19%</td>
+          <td class="num">17.0</td><td class="num">¥6,056</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_Res_1200x628</td>
+          <td class="num">¥82,128</td><td class="num">228,410</td>
+          <td class="num">641</td><td class="num">0.28%</td>
+          <td class="num">4.0</td><td class="num">¥20,532</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_1日_YTOP面_Ban_600x500">50ALL_性全_SP_OS全_W/A_LP_1日_YTOP面_Ban_600x500</td>
+          <td class="num">¥72,756</td><td class="num">56,215</td>
+          <td class="num">466</td><td class="num">0.83%</td>
+          <td class="num">9.0</td><td class="num">¥8,084</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1200x628</td>
+          <td class="num">¥69,096</td><td class="num">64,151</td>
+          <td class="num">300</td><td class="num">0.47%</td>
+          <td class="num">17.0</td><td class="num">¥4,064</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEother面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_LINEother面_Res_1200x628</td>
+          <td class="num">¥67,884</td><td class="num">88,385</td>
+          <td class="num">266</td><td class="num">0.30%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系__YTOP面_Banner_600x500">50ALL_性全_PC_OS全_W/A_指名系__YTOP面_Banner_600x500</td>
+          <td class="num">¥64,564</td><td class="num">1,353,382</td>
+          <td class="num">810</td><td class="num">0.06%</td>
+          <td class="num">4.0</td><td class="num">¥16,141</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Res_1200x628</td>
+          <td class="num">¥62,013</td><td class="num">571,425</td>
+          <td class="num">1,615</td><td class="num">0.28%</td>
+          <td class="num">2.0</td><td class="num">¥31,006</td></tr><tr>
+          <td title="CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL">CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL</td>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628</td>
+          <td class="num">¥61,352</td><td class="num">42,102</td>
+          <td class="num">58</td><td class="num">0.14%</td>
+          <td class="num">4.0</td><td class="num">¥15,338</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複...</td>
+          <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_Y面_Banner_600x500</td>
+          <td class="num">¥57,200</td><td class="num">1,082,868</td>
+          <td class="num">712</td><td class="num">0.07%</td>
+          <td class="num">6.0</td><td class="num">¥9,533</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_2-7日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_LP_2-7日_LINE面_Res_1200x628</td>
+          <td class="num">¥52,312</td><td class="num">144,628</td>
+          <td class="num">717</td><td class="num">0.50%</td>
+          <td class="num">4.0</td><td class="num">¥13,078</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_LP_1-14日_Y面_Ban_600x500">50ALL_性全_PC_OS全_W/A_LP_1-14日_Y面_Ban_600x500</td>
+          <td class="num">¥49,046</td><td class="num">585,492</td>
+          <td class="num">289</td><td class="num">0.05%</td>
+          <td class="num">7.0</td><td class="num">¥7,007</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_LINE面_Res_1200x628</td>
+          <td class="num">¥46,643</td><td class="num">98,949</td>
+          <td class="num">332</td><td class="num">0.34%</td>
+          <td class="num">3.0</td><td class="num">¥15,548</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_LP_2-7日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_LP_2-7日_YTOP面_Res_1200x628</td>
+          <td class="num">¥43,219</td><td class="num">157,252</td>
+          <td class="num">273</td><td class="num">0.17%</td>
+          <td class="num">5.0</td><td class="num">¥8,644</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_SP-BP">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_SP-BP</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_BP面_SP-BP静止画_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_BP面_SP-BP静止画_1200x628</td>
+          <td class="num">¥43,173</td><td class="num">25,625</td>
+          <td class="num">159</td><td class="num">0.62%</td>
+          <td class="num">8.0</td><td class="num">¥5,397</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP</td>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP-BP静止画_640x360">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP-BP静止画_640x360</td>
+          <td class="num">¥40,173</td><td class="num">16,319</td>
+          <td class="num">124</td><td class="num">0.76%</td>
+          <td class="num">2.0</td><td class="num">¥20,087</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Ban_600x500">50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Ban_600x500</td>
+          <td class="num">¥38,999</td><td class="num">624,673</td>
+          <td class="num">515</td><td class="num">0.08%</td>
+          <td class="num">6.0</td><td class="num">¥6,500</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_Y面_Ban_600x500">50ALL_性全_PC_OS全_W/A_指名系_-_Y面_Ban_600x500</td>
+          <td class="num">¥34,841</td><td class="num">330,440</td>
+          <td class="num">132</td><td class="num">0.04%</td>
+          <td class="num">4.0</td><td class="num">¥8,710</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_指名系_-_YTOP面_Res_1200x628</td>
+          <td class="num">¥33,411</td><td class="num">152,359</td>
+          <td class="num">190</td><td class="num">0.12%</td>
+          <td class="num">9.0</td><td class="num">¥3,712</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_Y面_Res_1200x628">50ALL_性全_PC_OS全_W/A_指名系_-_Y面_Res_1200x628</td>
+          <td class="num">¥31,831</td><td class="num">341,822</td>
+          <td class="num">208</td><td class="num">0.06%</td>
+          <td class="num">2.0</td><td class="num">¥15,915</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP</td>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_1日_BP面_SP-BP静止画_640x360">50ALL_性全_SP_OS全_W/A_LP_1日_BP面_SP-BP静止画_640x360</td>
+          <td class="num">¥29,365</td><td class="num">14,256</td>
+          <td class="num">156</td><td class="num">1.09%</td>
+          <td class="num">13.0</td><td class="num">¥2,259</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_PC_OS全_商品_50ALL_PC-BP">CA_恒常_lcmr_有2_ADCLICK_性全_PC_OS全_商品_50ALL_P...</td>
+          <td title="50ALL_性全_PC_OS全_W/A_ADクリッカー_1-7日_BP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_ADクリッカー_1-7日_BP面_Res_1200x628</td>
+          <td class="num">¥27,547</td><td class="num">38,820</td>
+          <td class="num">71</td><td class="num">0.18%</td>
+          <td class="num">8.0</td><td class="num">¥3,443</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_YTOP面_Ban_600x500">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_YTOP面_Ban_600x500</td>
+          <td class="num">¥25,108</td><td class="num">39,521</td>
+          <td class="num">112</td><td class="num">0.28%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628</td>
+          <td class="num">¥24,988</td><td class="num">50,056</td>
+          <td class="num">52</td><td class="num">0.10%</td>
+          <td class="num">3.0</td><td class="num">¥8,329</td></tr><tr>
+          <td title="CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL">CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL</td>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_Y面_Res_1200x628">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_Y面_Res_1200x628</td>
+          <td class="num">¥24,092</td><td class="num">83,979</td>
+          <td class="num">84</td><td class="num">0.10%</td>
+          <td class="num">4.0</td><td class="num">¥6,023</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_高CVR|NonYJ面_Ban_600x500">50ALL_性全_SP_OS全_W/A_指名系_-_高CVR|NonYJ面_Ban_600x500</td>
+          <td class="num">¥23,163</td><td class="num">68,609</td>
+          <td class="num">63</td><td class="num">0.09%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_1-7日_Y面_Ban_600x500">50ALL_性全_SP_OS全_W/A_LP_1-7日_Y面_Ban_600x500</td>
+          <td class="num">¥22,181</td><td class="num">295,384</td>
+          <td class="num">579</td><td class="num">0.20%</td>
+          <td class="num">2.0</td><td class="num">¥11,091</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系__Y面_Res_1200x628">50ALL_性全_PC_OS全_W/A_指名系__Y面_Res_1200x628</td>
+          <td class="num">¥20,229</td><td class="num">134,746</td>
+          <td class="num">288</td><td class="num">0.21%</td>
+          <td class="num">2.0</td><td class="num">¥10,114</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_高度なセグメント_性全_SP_OS全_商品_50ALL_...</td>
+          <td title="50ALL_性全_SP_OS全_W/A_高度なセグメント_商材名_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_高度なセグメント_商材名_Y面_Res_1200x628</td>
+          <td class="num">¥19,852</td><td class="num">527,399</td>
+          <td class="num">598</td><td class="num">0.11%</td>
+          <td class="num">2.0</td><td class="num">¥9,926</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_YTOP面_Ban_600x500">50ALL_性全_PC_OS全_W/A_指名系_-_YTOP面_Ban_600x500</td>
+          <td class="num">¥18,351</td><td class="num">99,866</td>
+          <td class="num">41</td><td class="num">0.04%</td>
+          <td class="num">3.0</td><td class="num">¥6,117</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_高CVR|NonYJ面_Res_1200x628">50ALL_性全_PC_OS全_W/A_指名系_-_高CVR|NonYJ面_Res_1200x628</td>
+          <td class="num">¥15,671</td><td class="num">39,113</td>
+          <td class="num">58</td><td class="num">0.15%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_高CVR|NonYJ面_Ban_600x500">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_高CVR|NonYJ面_Ban_600x500</td>
+          <td class="num">¥13,511</td><td class="num">14,636</td>
+          <td class="num">10</td><td class="num">0.07%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEnews面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_LINEnews面_Res_1200x628</td>
+          <td class="num">¥12,784</td><td class="num">34,400</td>
+          <td class="num">113</td><td class="num">0.33%</td>
+          <td class="num">1.0</td><td class="num">¥12,784</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT_スマタゲ">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT...</td>
+          <td title="50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1200x628</td>
+          <td class="num">¥10,534</td><td class="num">193,487</td>
+          <td class="num">67</td><td class="num">0.03%</td>
+          <td class="num">2.0</td><td class="num">¥5,267</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_高CVR|NonYJ面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_高CVR|NonYJ面_Res_1200x628</td>
+          <td class="num">¥10,335</td><td class="num">36,543</td>
+          <td class="num">252</td><td class="num">0.69%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複...</td>
+          <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_YTOP面_Banner_600x500">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_YTOP面_Banner_600x500</td>
+          <td class="num">¥10,285</td><td class="num">79,936</td>
+          <td class="num">248</td><td class="num">0.31%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複...</td>
+          <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_YTOP面_Res_1200x628">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_YTOP面_Res_1200x628</td>
+          <td class="num">¥10,271</td><td class="num">109,696</td>
+          <td class="num">309</td><td class="num">0.28%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_2-7日_YTOP面_Res_1200x628">50ALL_性全_SP_OS全_W/A_LP_2-7日_YTOP面_Res_1200x628</td>
+          <td class="num">¥9,949</td><td class="num">55,268</td>
+          <td class="num">322</td><td class="num">0.58%</td>
+          <td class="num">1.0</td><td class="num">¥9,949</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_指名系__LINE面_Banner_600x500</td>
+          <td class="num">¥9,900</td><td class="num">13,168</td>
+          <td class="num">56</td><td class="num">0.43%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT_スマタゲ">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT...</td>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_高CVR|NonYJ面_Ban_600x500">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_高CVR|NonYJ面_Ban_600x500</td>
+          <td class="num">¥9,648</td><td class="num">144,830</td>
+          <td class="num">114</td><td class="num">0.08%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Ban_600x500">50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Ban_600x500</td>
+          <td class="num">¥8,171</td><td class="num">19,949</td>
+          <td class="num">123</td><td class="num">0.62%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_2-7日_LINE面_Ban_600x500">50ALL_性全_SP_OS全_W/A_LP_2-7日_LINE面_Ban_600x500</td>
+          <td class="num">¥8,169</td><td class="num">7,486</td>
+          <td class="num">32</td><td class="num">0.43%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複...</td>
+          <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-7日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-7日_LINE面_Banner_600x500</td>
+          <td class="num">¥8,106</td><td class="num">7,727</td>
+          <td class="num">43</td><td class="num">0.56%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628</td>
+          <td class="num">¥7,744</td><td class="num">25,224</td>
+          <td class="num">82</td><td class="num">0.33%</td>
+          <td class="num">1.0</td><td class="num">¥7,744</td></tr><tr>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系__Y面_Res_1200x628</td>
+          <td class="num">¥7,421</td><td class="num">58,953</td>
+          <td class="num">80</td><td class="num">0.14%</td>
+          <td class="num">-</td><td class="num">-</td></tr></tbody>
+  </table></div>
+</section>
+
+<!-- AD -->
+<section id="ad" class="section">
+  <h2>📝 アド別（直近3週間）</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>アドグループ</th><th>アド名</th><th>費用</th><th>IMP</th><th>Click</th><th>CV</th><th>CPA</th></tr></thead>
+    <tbody><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1...</td>
+          <td title="20250623■lcmr_yn_ng_2s_250521_z5_yt_01_1200x628_kiwami.jpg■1■Q71">20250623■lcmr_yn_ng_2s_250521_z5_yt_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥115,431</td><td class="num">183,033</td>
+          <td class="num">817</td><td class="num">19.0</td>
+          <td class="num">¥6,075</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1...</td>
+          <td title="20260129■251212BeXWDETcS_lcmr_yn_ng_2s_251209_z5_hj_03_1200x628.jpg■3■Q98">20260129■251212BeXWDETcS_lcmr_yn_ng_2s_251209_z5_hj_03_12...</td>
+          <td class="num">¥91,420</td><td class="num">181,825</td>
+          <td class="num">646</td><td class="num">8.0</td>
+          <td class="num">¥11,427</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628_スマタゲ">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_...</td>
+          <td title="20251016■lcmr_yn_rg_2s_250911_z5_hj_01_1200x628_kiwami.jpg■1■Q95">20251016■lcmr_yn_rg_2s_250911_z5_hj_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥72,095</td><td class="num">352,507</td>
+          <td class="num">750</td><td class="num">1.0</td>
+          <td class="num">¥72,095</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628_スマタゲ">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_...</td>
+          <td title="20250827■lcmr_yn_rg_2s_250814_z5_hb_01_1200x628_kiwami.jpg■1■Q82">20250827■lcmr_yn_rg_2s_250814_z5_hb_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥66,860</td><td class="num">478,759</td>
+          <td class="num">759</td><td class="num">8.0</td>
+          <td class="num">¥8,358</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系__LINE面_Res_12...</td>
+          <td title="20260129■251212BeXWDETcS_lcmr_yn_ng_2s_251209_z5_hj_03_1200x628.jpg■3■Q98">20260129■251212BeXWDETcS_lcmr_yn_ng_2s_251209_z5_hj_03_12...</td>
+          <td class="num">¥66,351</td><td class="num">142,688</td>
+          <td class="num">621</td><td class="num">10.0</td>
+          <td class="num">¥6,635</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系__LINE面_Res_12...</td>
+          <td title="20260227■lcmr_yn_ng_2s_251204_z5_yi_01_1200x628_kiwami.jpg■1■Q98">20260227■lcmr_yn_ng_2s_251204_z5_yi_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥66,211</td><td class="num">143,880</td>
+          <td class="num">634</td><td class="num">7.0</td>
+          <td class="num">¥9,459</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1...</td>
+          <td title="20260129■251222BeJp5NAPS_lcmr_yn_ng_2s_251209_z4_hj_05_1200x628_kiwami.jpg■1■Q98">20260129■251222BeJp5NAPS_lcmr_yn_ng_2s_251209_z4_hj_05_12...</td>
+          <td class="num">¥63,677</td><td class="num">140,824</td>
+          <td class="num">484</td><td class="num">3.0</td>
+          <td class="num">¥21,226</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP-BP静止画_640x360_スマタゲ">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP...</td>
+          <td title="20260324■lcmr_yn_rg_2s_251112_y7_hj_01_1200x628_kiwami.jpg■1■Q97">20260324■lcmr_yn_rg_2s_251112_y7_hj_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥55,722</td><td class="num">105,222</td>
+          <td class="num">450</td><td class="num">9.0</td>
+          <td class="num">¥6,191</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系__LINE面_Res_12...</td>
+          <td title="20260129■251223Bf9Xm67zS_lcmr_yn_ng_2s_251209_z5_hj_06_1200x628_kiwami.jpg■2■Q98">20260129■251223Bf9Xm67zS_lcmr_yn_ng_2s_251209_z5_hj_06_12...</td>
+          <td class="num">¥53,371</td><td class="num">144,834</td>
+          <td class="num">590</td><td class="num">3.0</td>
+          <td class="num">¥17,790</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP-BP静止画_640x360_スマタゲ">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP...</td>
+          <td title="20260324■lcmr_yn_rg_2s_251015_y7_hj_01_1200x628_kiwami.jpg■1■Q96">20260324■lcmr_yn_rg_2s_251015_y7_hj_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥52,807</td><td class="num">105,744</td>
+          <td class="num">424</td><td class="num">5.0</td>
+          <td class="num">¥10,561</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner_600x500">50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner...</td>
+          <td title="20260129■251219BdNntYByS_lcmr_yn_ng_2s_251209_b5_hj_05_1200x628_kiwami.jpg■1■Q98">20260129■251219BdNntYByS_lcmr_yn_ng_2s_251209_b5_hj_05_12...</td>
+          <td class="num">¥52,454</td><td class="num">464,187</td>
+          <td class="num">840</td><td class="num">4.0</td>
+          <td class="num">¥13,113</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP-BP静止画_640x360_スマタゲ">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_BP面_SP...</td>
+          <td title="20260324■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jpg■1■Q98">20260324■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥47,445</td><td class="num">104,483</td>
+          <td class="num">390</td><td class="num">2.0</td>
+          <td class="num">¥23,723</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_Y面_Res...</td>
+          <td title="20251016■lcmr_yn_rg_2s_250911_a6_yt_01_1200x628_kiwami.jpg■1■Q95">20251016■lcmr_yn_rg_2s_250911_a6_yt_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥47,110</td><td class="num">76,236</td>
+          <td class="num">199</td><td class="num">4.0</td>
+          <td class="num">¥11,777</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_BP面_PC-BP静止画_600x600">50ALL_性全_PC_OS全_W/A_指名系_-_BP面_PC-BP静止...</td>
+          <td title="20250527■lcmr_yn_ng_2s_250424_p6_yt_01_600x600_kiwami.jpg■id_002■Q66">20250527■lcmr_yn_ng_2s_250424_p6_yt_01_600x600_kiwami.jpg...</td>
+          <td class="num">¥43,424</td><td class="num">31,379</td>
+          <td class="num">73</td><td class="num">6.0</td>
+          <td class="num">¥7,237</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_...</td>
+          <td title="20251016■lcmr_yn_rg_2s_250911_z5_hj_01_1200x628_kiwami.jpg■1■Q95">20251016■lcmr_yn_rg_2s_250911_z5_hj_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥39,600</td><td class="num">37,709</td>
+          <td class="num">39</td><td class="num">1.0</td>
+          <td class="num">¥39,600</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_Y面_Res...</td>
+          <td title="20251216■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jpg■1■Q98">20251216■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥39,046</td><td class="num">76,150</td>
+          <td class="num">192</td><td class="num">3.0</td>
+          <td class="num">¥13,015</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner_600x500">50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner...</td>
+          <td title="20260129■251222BeJp5NAPS_lcmr_yn_ng_2s_251209_z4_hj_05_1200x628_kiwami.jpg■1■Q98">20260129■251222BeJp5NAPS_lcmr_yn_ng_2s_251209_z4_hj_05_12...</td>
+          <td class="num">¥38,853</td><td class="num">362,074</td>
+          <td class="num">667</td><td class="num">2.0</td>
+          <td class="num">¥19,426</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_Y面_Res...</td>
+          <td title="20250910■lcmr_yn_ng_2s_250814_y2_hb_01_1200x628_kiwami.jpg■1■Q90">20250910■lcmr_yn_ng_2s_250814_y2_hb_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥37,036</td><td class="num">76,203</td>
+          <td class="num">176</td><td class="num">2.0</td>
+          <td class="num">¥18,518</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_...</td>
+          <td title="20251216■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jpg■1■Q98">20251216■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥33,305</td><td class="num">21,112</td>
+          <td class="num">35</td><td class="num">3.0</td>
+          <td class="num">¥11,102</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_BP面_PC-BP静止画_600x600">50ALL_性全_PC_OS全_W/A_指名系_-_BP面_PC-BP静止...</td>
+          <td title="20251126■lcmr_fb_rg_2s_250814_c5_yt_01_1080x1080_kiwami.jpg">20251126■lcmr_fb_rg_2s_250814_c5_yt_01_1080x1080_kiwami.jpg</td>
+          <td class="num">¥32,480</td><td class="num">30,800</td>
+          <td class="num">64</td><td class="num">6.0</td>
+          <td class="num">¥5,413</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_Y面_...</td>
+          <td title="20251114■lcmr_yn_ng_2s_251015_a6_yi_01_600x500_kiwami.jpg■Q95">20251114■lcmr_yn_ng_2s_251015_a6_yi_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥28,752</td><td class="num">541,055</td>
+          <td class="num">362</td><td class="num">3.0</td>
+          <td class="num">¥9,584</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1...</td>
+          <td title="20250827■lcmr_yn_rg_2s_250814_z5_hb_01_1200x628_kiwami.jpg■1■Q82">20250827■lcmr_yn_rg_2s_250814_z5_hb_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥28,627</td><td class="num">87,284</td>
+          <td class="num">124</td><td class="num">12.0</td>
+          <td class="num">¥2,386</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_Y面_...</td>
+          <td title="20251114■lcmr_yn_ng_2s_251015_y7_hb_01_600x500_kiwami.jpg■Q95">20251114■lcmr_yn_ng_2s_251015_y7_hb_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥28,448</td><td class="num">541,813</td>
+          <td class="num">350</td><td class="num">3.0</td>
+          <td class="num">¥9,483</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_1日_YTOP面_Ban_600x500">50ALL_性全_SP_OS全_W/A_LP_1日_YTOP面_Ban_6...</td>
+          <td title="20251203■lcmr_yn_rg_2s_251112_y7_hb_01_600x500_kiwami.jpg■Q97">20251203■lcmr_yn_rg_2s_251112_y7_hb_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥28,428</td><td class="num">18,825</td>
+          <td class="num">154</td><td class="num">5.0</td>
+          <td class="num">¥5,686</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1...</td>
+          <td title="20251203■lcmr_yn_rg_2s_251112_z5_yl_01_1200x628_kiwami.jpg■1■Q97">20251203■lcmr_yn_rg_2s_251112_z5_yl_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥28,382</td><td class="num">73,449</td>
+          <td class="num">122</td><td class="num">4.0</td>
+          <td class="num">¥7,095</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEother面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_LINEother面_...</td>
+          <td title="20260227■lcmr_yn_ng_2s_251204_z5_hb_01_1200x628_kiwami.jpg■1■Q98">20260227■lcmr_yn_ng_2s_251204_z5_hb_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥27,590</td><td class="num">33,759</td>
+          <td class="num">110</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_BP面_PC-BP静止画_600x600">50ALL_性全_PC_OS全_W/A_指名系_-_BP面_PC-BP静止...</td>
+          <td title="20251126■lcmr_fb_ng_2s_250814_c5_hb_01_1080x1080_kiwami (1).jpg">20251126■lcmr_fb_ng_2s_250814_c5_hb_01_1080x1080_kiwami (...</td>
+          <td class="num">¥27,046</td><td class="num">30,147</td>
+          <td class="num">43</td><td class="num">5.0</td>
+          <td class="num">¥5,409</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEother面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_LINEother面_...</td>
+          <td title="20260227■lcmr_yn_ng_2s_251204_b1_hb_02_1200x628_kiwami.jpg■1■Q98">20260227■lcmr_yn_ng_2s_251204_b1_hb_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥26,517</td><td class="num">35,557</td>
+          <td class="num">101</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_Res_1200x628_スマタゲ">50ALL_性全_PC_OS全_W/A_フォーム_1-14日_YTOP面_...</td>
+          <td title="20251203■lcmr_yn_rg_2s_251112_z5_yl_01_1200x628_kiwami.jpg■1■Q97">20251203■lcmr_yn_rg_2s_251112_z5_yl_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥25,260</td><td class="num">244,386</td>
+          <td class="num">343</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_R...</td>
+          <td title="20260227■lcmr_yn_ng_2s_251204_b1_hb_02_1200x628_kiwami.jpg■1■Q98">20260227■lcmr_yn_ng_2s_251204_b1_hb_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥23,025</td><td class="num">59,242</td>
+          <td class="num">179</td><td class="num">1.0</td>
+          <td class="num">¥23,025</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_指名系_-_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_指名系_-_YTOP面_Res_1...</td>
+          <td title="20251203■lcmr_yn_ng_2s_251112_a4_hb_02_1200x628_kiwami.jpg■1■Q97">20251203■lcmr_yn_ng_2s_251112_a4_hb_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥22,453</td><td class="num">74,285</td>
+          <td class="num">112</td><td class="num">5.0</td>
+          <td class="num">¥4,491</td></tr><tr>
+          <td title="50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1200x628">50ALL_性全_PC_OS全_W/A_LP_1日_YTOP面_Res_1...</td>
+          <td title="20250626■lcmr_yn_rg_2s_250613_z5_hb_01_1200x628_kiwami.jpg■1■Q80">20250626■lcmr_yn_rg_2s_250613_z5_hb_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥22,317</td><td class="num">82,234</td>
+          <td class="num">115</td><td class="num">3.0</td>
+          <td class="num">¥7,439</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_1日_YTOP面_Ban_600x500">50ALL_性全_SP_OS全_W/A_LP_1日_YTOP面_Ban_6...</td>
+          <td title="20251203■lcmr_yn_rg_2s_251112_z5_hj_01_600x500_kiwami.jpg■Q97">20251203■lcmr_yn_rg_2s_251112_z5_hj_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥21,115</td><td class="num">18,656</td>
+          <td class="num">155</td><td class="num">2.0</td>
+          <td class="num">¥10,557</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_YTOP面_Res_1...</td>
+          <td title="20260227■lcmr_yn_ng_2s_251204_z5_hb_01_1200x628_kiwami.jpg■1■Q98">20260227■lcmr_yn_ng_2s_251204_z5_hb_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥20,598</td><td class="num">40,758</td>
+          <td class="num">144</td><td class="num">3.0</td>
+          <td class="num">¥6,866</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner_600x500">50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner...</td>
+          <td title="20260129■251219B96BTh1bS_lcmr_yn_ng_2s_251209_b5_hj_02_600x500_kiwami.jpg■Q98">20260129■251219B96BTh1bS_lcmr_yn_ng_2s_251209_b5_hj_02_60...</td>
+          <td class="num">¥20,157</td><td class="num">272,831</td>
+          <td class="num">300</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_R...</td>
+          <td title="20260129■251215BeMepJy6S_lcmr_yn_ng_2s_251209_b5_hj_01_1200x628_kiwami.jpg■2■Q98">20260129■251215BeMepJy6S_lcmr_yn_ng_2s_251209_b5_hj_01_12...</td>
+          <td class="num">¥19,953</td><td class="num">59,786</td>
+          <td class="num">166</td><td class="num">1.0</td>
+          <td class="num">¥19,953</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_LP_1日_YTOP面_Ban_600x500">50ALL_性全_SP_OS全_W/A_LP_1日_YTOP面_Ban_6...</td>
+          <td title="20250526■lcmr_yn_rg_2s_250424_w7_hb_01_600x500_kiwami.jpg■locomoretrial■Q68">20250526■lcmr_yn_rg_2s_250424_w7_hb_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥19,723</td><td class="num">15,375</td>
+          <td class="num">127</td><td class="num">2.0</td>
+          <td class="num">¥9,862</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Res_1200...</td>
+          <td title="20260129■251223Bf8EfkZ1S_lcmr_yn_ng_2s_251209_z5_hj_07_1200x628_kiwami.jpg■2■Q98">20260129■251223Bf8EfkZ1S_lcmr_yn_ng_2s_251209_z5_hj_07_12...</td>
+          <td class="num">¥19,543</td><td class="num">189,286</td>
+          <td class="num">511</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner_600x500">50ALL_性全_SP_OS全_W/A_指名系__YTOP面_Banner...</td>
+          <td title="20251016■lcmr_yn_ng_2s_250911_b5_yt_01_600x500_kiwami.jpg■Q94">20251016■lcmr_yn_ng_2s_250911_b5_yt_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥19,521</td><td class="num">271,658</td>
+          <td class="num">276</td><td class="num">2.0</td>
+          <td class="num">¥9,760</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_Res_1200x628">50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_R...</td>
+          <td title="20260129■251210BdKoxDEfS_lcmr_yn_ng_2s_251209_b5_hj_03_1200x628_kiwami.jpg■2■Q98">20260129■251210BdKoxDEfS_lcmr_yn_ng_2s_251209_b5_hj_03_12...</td>
+          <td class="num">¥19,199</td><td class="num">59,264</td>
+          <td class="num">154</td><td class="num">-</td>
+          <td class="num">-</td></tr></tbody>
+  </table></div>
+</section>
+
+<!-- TARGETING -->
+<section id="targeting" class="section">
+  <h2>🎯 ターゲティング・管理区分</h2>
+  <div class="chart-row">
+    <div class="chart-card"><h3>RTG/NonRTG 費用</h3><canvas id="dsChart"></canvas></div>
+    <div class="chart-card"><h3>ターゲティング別 費用</h3><canvas id="tgtChart"></canvas></div>
+  </div>
+  <div style="margin-top:16px;">
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="swTab(event,'tgt-t')">ターゲティング別</button>
+      <button class="tab-btn" onclick="swTab(event,'mgmt-t')">管理区分別</button>
+    </div>
+    <div id="tgt-t" class="tab-content active">
+      <div class="table-wrap"><table>
+        <thead><tr><th>ターゲティング</th><th>費用</th><th>IMP</th><th>Click</th><th>CTR</th><th>CV</th><th>CPA</th></tr></thead>
+        <tbody><tr>
+          <td>NONRTG</td>
+          <td class="num">¥1,500,588</td><td class="num">9,325,800</td>
+          <td class="num">15,950</td><td class="num">0.17%</td>
+          <td class="num">147.0</td><td class="num">¥10,208</td></tr><tr>
+          <td>RTG</td>
+          <td class="num">¥1,118,162</td><td class="num">3,903,177</td>
+          <td class="num">8,287</td><td class="num">0.21%</td>
+          <td class="num">116.0</td><td class="num">¥9,639</td></tr></tbody>
+      </table></div>
+    </div>
+    <div id="mgmt-t" class="tab-content">
+      <div class="table-wrap"><table>
+        <thead><tr><th>管理区分</th><th>費用</th><th>IMP</th><th>Click</th><th>CV</th><th>CPA</th></tr></thead>
+        <tbody><tr>
+          <td>通常活動</td>
+          <td class="num">¥2,618,750</td><td class="num">13,228,977</td>
+          <td class="num">24,237</td><td class="num">263.0</td>
+          <td class="num">¥9,957</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- CREATIVE -->
+<section id="creative" class="section">
+  <h2>🎨 クリエイティブ分析（直近3週間）</h2>
+  <div class="chart-row">
+    <div class="chart-card"><h3>デバイス別費用</h3><canvas id="devChart"></canvas></div>
+  </div>
+  <div class="table-wrap" style="margin-top:14px;"><table>
+    <thead><tr><th>アド名</th><th>タイプ</th><th>タイトル</th><th>テキスト</th><th>画像</th><th>費用</th><th>IMP</th><th>Click</th><th>CTR</th><th>CV</th><th>CPA</th></tr></thead>
+    <tbody><tr>
+          <td title="20260129■251212BeXWDETcS_lcmr_yn_ng_2s_251209_z5_hj_03_1200x628.jpg■3■Q98">20260129■251212BeXWDETcS_lcmr_yn_ng_2s_251209_z...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19940091" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥172,992</td><td class="num">375,095</td>
+          <td class="num">1,369</td><td class="num">0.36%</td>
+          <td class="num">18.0</td><td class="num">¥9,611</td></tr><tr>
+          <td title="20251016■lcmr_yn_rg_2s_250911_z5_hj_01_1200x628_kiwami.jpg■1■Q95">20251016■lcmr_yn_rg_2s_250911_z5_hj_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19048172" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥143,295</td><td class="num">477,655</td>
+          <td class="num">1,024</td><td class="num">0.21%</td>
+          <td class="num">4.0</td><td class="num">¥35,824</td></tr><tr>
+          <td title="20250623■lcmr_yn_ng_2s_250521_z5_yt_01_1200x628_kiwami.jpg■1■Q71">20250623■lcmr_yn_ng_2s_250521_z5_yt_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.dev.opelake.com/1001764569/image/18256663" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥115,627</td><td class="num">185,342</td>
+          <td class="num">819</td><td class="num">0.44%</td>
+          <td class="num">19.0</td><td class="num">¥6,086</td></tr><tr>
+          <td title="20250827■lcmr_yn_rg_2s_250814_z5_hb_01_1200x628_kiwami.jpg■1■Q82">20250827■lcmr_yn_rg_2s_250814_z5_hb_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/18713221" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥112,737</td><td class="num">617,710</td>
+          <td class="num">1,117</td><td class="num">0.18%</td>
+          <td class="num">23.0</td><td class="num">¥4,902</td></tr><tr>
+          <td title="20260129■251222BeJp5NAPS_lcmr_yn_ng_2s_251209_z4_hj_05_1200x628_kiwami.jpg■1■Q98">20260129■251222BeJp5NAPS_lcmr_yn_ng_2s_251209_z...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19940067" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥102,530</td><td class="num">502,898</td>
+          <td class="num">1,151</td><td class="num">0.23%</td>
+          <td class="num">5.0</td><td class="num">¥20,506</td></tr><tr>
+          <td title="20251216■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jpg■1■Q98">20251216■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19568253" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥94,454</td><td class="num">169,908</td>
+          <td class="num">385</td><td class="num">0.23%</td>
+          <td class="num">9.0</td><td class="num">¥10,495</td></tr><tr>
+          <td title="20251203■lcmr_yn_rg_2s_251112_z5_yl_01_1200x628_kiwami.jpg■1■Q97">20251203■lcmr_yn_rg_2s_251112_z5_yl_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19460348" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥91,141</td><td class="num">422,789</td>
+          <td class="num">713</td><td class="num">0.17%</td>
+          <td class="num">7.0</td><td class="num">¥13,020</td></tr><tr>
+          <td title="20260129■251223Bf9Xm67zS_lcmr_yn_ng_2s_251209_z5_hj_06_1200x628_kiwami.jpg■2■Q98">20260129■251223Bf9Xm67zS_lcmr_yn_ng_2s_251209_z...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19940083" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥85,457</td><td class="num">384,560</td>
+          <td class="num">945</td><td class="num">0.25%</td>
+          <td class="num">4.0</td><td class="num">¥21,364</td></tr><tr>
+          <td title="20260227■lcmr_yn_ng_2s_251204_z5_hb_01_1200x628_kiwami.jpg■1■Q98">20260227■lcmr_yn_ng_2s_251204_z5_hb_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/20207776" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥70,541</td><td class="num">135,738</td>
+          <td class="num">492</td><td class="num">0.36%</td>
+          <td class="num">6.0</td><td class="num">¥11,757</td></tr><tr>
+          <td title="20260227■lcmr_yn_ng_2s_251204_z5_yi_01_1200x628_kiwami.jpg■1■Q98">20260227■lcmr_yn_ng_2s_251204_z5_yi_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/20194200" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥67,231</td><td class="num">171,010</td>
+          <td class="num">710</td><td class="num">0.42%</td>
+          <td class="num">7.0</td><td class="num">¥9,604</td></tr><tr>
+          <td title="20260324■lcmr_yn_rg_2s_251112_y7_hj_01_1200x628_kiwami.jpg■1■Q97">20260324■lcmr_yn_rg_2s_251112_y7_hj_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.dev.opelake.com/1001588802/image/19460343" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥55,722</td><td class="num">105,222</td>
+          <td class="num">450</td><td class="num">0.43%</td>
+          <td class="num">9.0</td><td class="num">¥6,191</td></tr><tr>
+          <td title="20260324■lcmr_yn_rg_2s_251015_y7_hj_01_1200x628_kiwami.jpg■1■Q96">20260324■lcmr_yn_rg_2s_251015_y7_hj_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19315609" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥52,807</td><td class="num">105,744</td>
+          <td class="num">424</td><td class="num">0.40%</td>
+          <td class="num">5.0</td><td class="num">¥10,561</td></tr><tr>
+          <td title="20260129■251219BdNntYByS_lcmr_yn_ng_2s_251209_b5_hj_05_1200x628_kiwami.jpg■1■Q98">20260129■251219BdNntYByS_lcmr_yn_ng_2s_251209_b...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19940063" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥52,454</td><td class="num">464,187</td>
+          <td class="num">840</td><td class="num">0.18%</td>
+          <td class="num">4.0</td><td class="num">¥13,113</td></tr><tr>
+          <td title="20260129■251223Bf8EfkZ1S_lcmr_yn_ng_2s_251209_z5_hj_07_1200x628_kiwami.jpg■2■Q98">20260129■251223Bf8EfkZ1S_lcmr_yn_ng_2s_251209_z...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19940080" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥52,043</td><td class="num">497,617</td>
+          <td class="num">939</td><td class="num">0.19%</td>
+          <td class="num">5.0</td><td class="num">¥10,409</td></tr><tr>
+          <td title="20260227■lcmr_yn_ng_2s_251204_b1_hb_02_1200x628_kiwami.jpg■1■Q98">20260227■lcmr_yn_ng_2s_251204_b1_hb_02_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.dev.opelake.com/1001764569/image/20207764" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥51,024</td><td class="num">117,706</td>
+          <td class="num">324</td><td class="num">0.28%</td>
+          <td class="num">1.0</td><td class="num">¥51,024</td></tr><tr>
+          <td title="20251203■lcmr_yn_rg_2s_251112_z5_hj_01_600x500_kiwami.jpg■Q97">20251203■lcmr_yn_rg_2s_251112_z5_hj_01_600x500_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19460347" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥50,977</td><td class="num">189,391</td>
+          <td class="num">480</td><td class="num">0.25%</td>
+          <td class="num">2.0</td><td class="num">¥25,488</td></tr><tr>
+          <td title="20251016■lcmr_yn_rg_2s_250911_a6_yt_01_1200x628_kiwami.jpg■1■Q95">20251016■lcmr_yn_rg_2s_250911_a6_yt_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19048171" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥47,977</td><td class="num">78,172</td>
+          <td class="num">216</td><td class="num">0.28%</td>
+          <td class="num">4.0</td><td class="num">¥11,994</td></tr><tr>
+          <td title="20260324■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jpg■1■Q98">20260324■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19568253" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥47,445</td><td class="num">104,483</td>
+          <td class="num">390</td><td class="num">0.37%</td>
+          <td class="num">2.0</td><td class="num">¥23,723</td></tr><tr>
+          <td title="20260129■251219B96BTh1bS_lcmr_yn_ng_2s_251209_b5_hj_02_600x500_kiwami.jpg■Q98">20260129■251219B96BTh1bS_lcmr_yn_ng_2s_251209_b...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19940081" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥43,930</td><td class="num">729,338</td>
+          <td class="num">502</td><td class="num">0.07%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="20250527■lcmr_yn_ng_2s_250424_p6_yt_01_600x600_kiwami.jpg■id_002■Q66">20250527■lcmr_yn_ng_2s_250424_p6_yt_01_600x600_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.dev.opelake.com/1001764569/image/18098855" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥43,424</td><td class="num">31,379</td>
+          <td class="num">73</td><td class="num">0.23%</td>
+          <td class="num">6.0</td><td class="num">¥7,237</td></tr><tr>
+          <td title="20251203■lcmr_yn_rg_2s_251112_y7_hb_01_600x500_kiwami.jpg■Q97">20251203■lcmr_yn_rg_2s_251112_y7_hb_01_600x500_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19460344" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥40,168</td><td class="num">120,483</td>
+          <td class="num">356</td><td class="num">0.30%</td>
+          <td class="num">7.0</td><td class="num">¥5,738</td></tr><tr>
+          <td title="20260129■251219BcKjMhVaS_lcmr_yn_ng_2s_251209_b5_hj_04_600x500_kiwami.jpg■Q98">20260129■251219BcKjMhVaS_lcmr_yn_ng_2s_251209_b...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19940060" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥37,099</td><td class="num">471,915</td>
+          <td class="num">204</td><td class="num">0.04%</td>
+          <td class="num">2.0</td><td class="num">¥18,550</td></tr><tr>
+          <td title="20250910■lcmr_yn_ng_2s_250814_y2_hb_01_1200x628_kiwami.jpg■1■Q90">20250910■lcmr_yn_ng_2s_250814_y2_hb_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/18812672" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥37,036</td><td class="num">76,203</td>
+          <td class="num">176</td><td class="num">0.23%</td>
+          <td class="num">2.0</td><td class="num">¥18,518</td></tr><tr>
+          <td title="20251126■lcmr_fb_rg_2s_250814_c5_yt_01_1080x1080_kiwami.jpg">20251126■lcmr_fb_rg_2s_250814_c5_yt_01_1080x108...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.dev.opelake.com/1001764569/image/19405619" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥32,480</td><td class="num">30,800</td>
+          <td class="num">64</td><td class="num">0.21%</td>
+          <td class="num">6.0</td><td class="num">¥5,413</td></tr><tr>
+          <td title="20260129■251215BeMepJy6S_lcmr_yn_ng_2s_251209_b5_hj_01_1200x628_kiwami.jpg■2■Q98">20260129■251215BeMepJy6S_lcmr_yn_ng_2s_251209_b...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19940072" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥30,918</td><td class="num">67,133</td>
+          <td class="num">211</td><td class="num">0.31%</td>
+          <td class="num">4.0</td><td class="num">¥7,729</td></tr><tr>
+          <td title="20251114■lcmr_yn_ng_2s_251015_y7_hb_01_600x500_kiwami.jpg■Q95">20251114■lcmr_yn_ng_2s_251015_y7_hb_01_600x500_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19315630" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥30,287</td><td class="num">600,482</td>
+          <td class="num">389</td><td class="num">0.06%</td>
+          <td class="num">3.0</td><td class="num">¥10,096</td></tr><tr>
+          <td title="20251203■lcmr_yn_rg_2s_251112_x1_hj_01_640x360_kiwami.jpg■Q97">20251203■lcmr_yn_rg_2s_251112_x1_hj_01_640x360_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001588802/image/19460346" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥29,396</td><td class="num">18,228</td>
+          <td class="num">124</td><td class="num">0.68%</td>
+          <td class="num">6.0</td><td class="num">¥4,899</td></tr><tr>
+          <td title="20251114■lcmr_yn_ng_2s_251015_a6_yi_01_600x500_kiwami.jpg■Q95">20251114■lcmr_yn_ng_2s_251015_a6_yi_01_600x500_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19315623" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥28,860</td><td class="num">546,952</td>
+          <td class="num">366</td><td class="num">0.07%</td>
+          <td class="num">3.0</td><td class="num">¥9,620</td></tr><tr>
+          <td title="20251126■lcmr_fb_ng_2s_250814_c5_hb_01_1080x1080_kiwami (1).jpg">20251126■lcmr_fb_ng_2s_250814_c5_hb_01_1080x108...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.dev.opelake.com/1001764569/image/19405620" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥27,046</td><td class="num">30,147</td>
+          <td class="num">43</td><td class="num">0.14%</td>
+          <td class="num">5.0</td><td class="num">¥5,409</td></tr><tr>
+          <td title="20251016■lcmr_yn_ng_2s_250911_a9_hb_01_600x500_kiwami.jpg■Q94">20251016■lcmr_yn_ng_2s_250911_a9_hb_01_600x500_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001764569/image/19047838" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥26,990</td><td class="num">423,046</td>
+          <td class="num">193</td><td class="num">0.05%</td>
+          <td class="num">5.0</td><td class="num">¥5,398</td></tr></tbody>
+  </table></div>
+</section>
+
+<!-- PRIORITY -->
+<section id="priority" class="section">
+  <h2>⚡ 優先順位</h2>
+  <p style="font-size:11px;color:var(--text2);margin-bottom:10px;">スコア = 費用規模(50%) + 効率性(30%) + CV量(20%)</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>順位</th><th>キャンペーン</th><th>費用</th><th>CV</th><th>CPA</th><th>スコア</th></tr></thead>
+    <tbody><tr>
+          <td>🔴 1</td>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥608,443</td><td class="num">46.0</td>
+          <td class="num">¥13,227</td><td class="num">70.8</td></tr><tr>
+          <td>🔴 2</td>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥351,838</td><td class="num">32.0</td>
+          <td class="num">¥10,995</td><td class="num">48.6</td></tr><tr>
+          <td>🔴 3</td>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥202,748</td><td class="num">32.0</td>
+          <td class="num">¥6,336</td><td class="num">46.6</td></tr><tr>
+          <td>🟡 4</td>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥268,782</td><td class="num">22.0</td>
+          <td class="num">¥12,217</td><td class="num">34.7</td></tr><tr>
+          <td>🟡 5</td>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_PC-BP">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_PC-BP</td>
+          <td class="num">¥102,951</td><td class="num">17.0</td>
+          <td class="num">¥6,056</td><td class="num">32.5</td></tr><tr>
+          <td>🟡 6</td>
+          <td title="CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_STG_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥139,125</td><td class="num">18.0</td>
+          <td class="num">¥7,729</td><td class="num">32.2</td></tr><tr>
+          <td>🟡 7</td>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP</td>
+          <td class="num">¥69,538</td><td class="num">15.0</td>
+          <td class="num">¥4,636</td><td class="num">32.0</td></tr><tr>
+          <td>🟡 8</td>
+          <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥8,965</td><td class="num">-</td>
+          <td class="num">-</td><td class="num">30.7</td></tr><tr>
+          <td>🟡 9</td>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP_スマタゲ">CA_恒常_lcmr_有2_RTG_性全_SP_OS全_商品_50ALL_SP-BP_スマタゲ</td>
+          <td class="num">¥177,691</td><td class="num">18.0</td>
+          <td class="num">¥9,872</td><td class="num">30.6</td></tr><tr>
+          <td>🟡 10</td>
+          <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_筋柔軟性_50ALL_複数FMT">CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_筋柔軟性_50ALL_複数FMT</td>
+          <td class="num">¥5,528</td><td class="num">-</td>
+          <td class="num">-</td><td class="num">30.5</td></tr><tr>
+          <td>🟢 11</td>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_PC_OS全_商品_50ALL_PC-BP">CA_恒常_lcmr_有2_ADCLICK_性全_PC_OS全_商品_50ALL_PC-BP</td>
+          <td class="num">¥33,903</td><td class="num">9.0</td>
+          <td class="num">¥3,767</td><td class="num">28.4</td></tr><tr>
+          <td>🟢 12</td>
+          <td title="CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL">CA_恒常_lcmr_RTG_性全_ALL_OS全_ABtest_信頼回復LP_50ALL</td>
+          <td class="num">¥208,634</td><td class="num">17.0</td>
+          <td class="num">¥12,273</td><td class="num">27.4</td></tr><tr>
+          <td>🟢 13</td>
+          <td title="CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_SP-BP">CA_恒常_lcmr_有2_STG_性全_SP_OS全_商品_50ALL_SP-BP</td>
+          <td class="num">¥46,811</td><td class="num">8.0</td>
+          <td class="num">¥5,851</td><td class="num">24.4</td></tr><tr>
+          <td>🟢 14</td>
+          <td title="CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT_スマタゲ">CA_恒常_lcmr_有2_RTG_性全_PC_OS全_商品_50ALL_複数FMT_スマタゲ</td>
+          <td class="num">¥190,768</td><td class="num">12.0</td>
+          <td class="num">¥15,897</td><td class="num">20.9</td></tr><tr>
+          <td>🟢 15</td>
+          <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_高度なセグメント_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥23,230</td><td class="num">3.0</td>
+          <td class="num">¥7,743</td><td class="num">16.1</td></tr><tr>
+          <td>🟢 16</td>
+          <td title="CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥95,001</td><td class="num">8.0</td>
+          <td class="num">¥11,875</td><td class="num">15.1</td></tr><tr>
+          <td>🟢 17</td>
+          <td title="CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT">CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥84,793</td><td class="num">6.0</td>
+          <td class="num">¥14,132</td><td class="num">9.6</td></tr></tbody>
+  </table></div>
+</section>
+
+</div>
+<script>
+const C=['#1a73e8','#db4437','#f4b400','#0f9d58','#ab47bc','#00acc1','#ff7043','#5c6bc0','#26a69a','#ec407a','#7e57c2','#42a5f5'];
+function swTab(e,id){ document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); e.target.classList.add('active'); }
+document.querySelectorAll('.nav a').forEach(a=>{ a.addEventListener('click',function(e){ e.preventDefault(); document.querySelector(this.getAttribute('href')).scrollIntoView({behavior:'smooth'}); document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); this.classList.add('active'); }); });
+</script>
+<script>
+new Chart(document.getElementById('mChart1'),{type:'bar',data:{labels:["2026-03", "2026-04"],datasets:[{label:'費用(¥)',data:[3939364.0, 566795.0],backgroundColor:'rgba(26,115,232,0.7)',yAxisID:'y',borderRadius:4},{label:'CV',data:[404.0, 56.0],type:'line',borderColor:'#db4437',yAxisID:'y1',tension:.3,pointRadius:5}]},options:{responsive:true,interaction:{mode:'index',intersect:false},scales:{y:{position:'left',title:{display:true,text:'費用'},ticks:{callback:v=>'¥'+(v/1e6).toFixed(1)+'M'}},y1:{position:'right',title:{display:true,text:'CV'},grid:{drawOnChartArea:false}}}}});
+new Chart(document.getElementById('mChart2'),{type:'bar',data:{labels:["2026-03", "2026-04"],datasets:[{label:'CPA(¥)',data:[9751.0, 10121.0],backgroundColor:'rgba(244,180,0,0.7)',borderRadius:4}]},options:{responsive:true,scales:{y:{ticks:{callback:v=>'¥'+v.toLocaleString()}}}}});
+new Chart(document.getElementById('dChart1'),{type:'line',data:{labels:["2026-03-15", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-21", "2026-03-22", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", "2026-03-29", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05"],datasets:[{label:'費用',data:[144926.0, 119736.0, 105135.0, 100125.0, 103958.0, 108532.0, 95601.0, 92374.0, 115295.0, 105106.0, 145590.0, 136963.0, 141947.0, 134327.0, 128144.0, 129237.0, 144959.0, 163635.0, 125295.0, 89304.0, 99724.0, 88837.0],borderColor:'#1a73e8',fill:true,backgroundColor:'rgba(26,115,232,0.06)',yAxisID:'y',tension:.3},{label:'Click',data:[1469.0, 1051.0, 891.0, 818.0, 753.0, 893.0, 964.0, 811.0, 980.0, 969.0, 1466.0, 1219.0, 1247.0, 1051.0, 1178.0, 1192.0, 1277.0, 1524.0, 1239.0, 1160.0, 1159.0, 926.0],borderColor:'#0f9d58',fill:true,backgroundColor:'rgba(15,157,88,0.06)',yAxisID:'y1',tension:.3}]},options:{responsive:true,interaction:{mode:'index',intersect:false},scales:{x:{ticks:{maxRotation:45,font:{size:9}}},y:{position:'left',ticks:{callback:v=>'¥'+(v/1e4).toFixed(0)+'万'}},y1:{position:'right',grid:{drawOnChartArea:false}}}}});
+new Chart(document.getElementById('dChart2'),{type:'bar',data:{labels:["2026-03-15", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-21", "2026-03-22", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", "2026-03-29", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05"],datasets:[{label:'CV',data:[16.0, 20.0, 12.0, 12.0, 7.0, 10.0, 14.0, 7.0, 11.0, 12.0, 20.0, 19.0, 13.0, 11.0, 10.0, 7.0, 6.0, 9.0, 13.0, 9.0, 12.0, 13.0],backgroundColor:'rgba(219,68,55,0.6)',yAxisID:'y',borderRadius:3},{label:'CPA',data:[9058.0, 5987.0, 8761.0, 8344.0, 14851.0, 10853.0, 6829.0, 13196.0, 10481.0, 8759.0, 7279.0, 7209.0, 10919.0, 12212.0, 12814.0, 18462.0, 24160.0, 18182.0, 9638.0, 9923.0, 8310.0, 6834.0],type:'line',borderColor:'#f4b400',yAxisID:'y1',tension:.3,pointRadius:3}]},options:{responsive:true,interaction:{mode:'index',intersect:false},scales:{x:{ticks:{maxRotation:45,font:{size:9}}},y:{position:'left',title:{display:true,text:'CV'}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>'¥'+v.toLocaleString()}}}}});
+new Chart(document.getElementById('dsChart'),{type:'doughnut',data:{labels:["SWE_NonRTG", "SWE_RTG"],datasets:[{data:[2657979.0, 1848181.0],backgroundColor:C.slice(0,5)}]},options:{responsive:true,plugins:{legend:{position:'right'}}}});
+new Chart(document.getElementById('tgtChart'),{type:'doughnut',data:{labels:["NONRTG", "RTG"],datasets:[{data:[1500588.0, 1118162.0],backgroundColor:C.slice(3,12)}]},options:{responsive:true,plugins:{legend:{position:'right'}}}});
+new Chart(document.getElementById('devChart'),{type:'bar',data:{labels:["SP", "PC+TAB"],datasets:[{label:'費用',data:[1779018.0, 839732.0],backgroundColor:C.slice(0,5),borderRadius:6}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>'¥'+(v/1e4).toFixed(0)+'万'}}}}});
+</script>
+</body></html>

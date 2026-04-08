@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWE オンパレ美容 × YDA レポート</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root { --primary:#ab47bc; --primary-dark:#8e24aa; --success:#0f9d58; --warning:#f4b400; --danger:#db4437; --bg:#f8f9fa; --card-bg:#fff; --text:#202124; --text2:#5f6368; --border:#e0e0e0; }
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { font-family:'Segoe UI','Hiragino Kaku Gothic ProN','Meiryo',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  .header { background:linear-gradient(135deg,#ab47bc,#8e24aa); color:#fff; padding:28px 32px; }
+  .header h1 { font-size:22px; font-weight:600; }
+  .header p { opacity:0.85; font-size:13px; margin-top:4px; }
+  .container { max-width:1400px; margin:0 auto; padding:20px; }
+  .nav { position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:6px;flex-wrap:wrap;box-shadow:0 2px 4px rgba(0,0,0,0.06); }
+  .nav a { text-decoration:none;color:var(--text2);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap; }
+  .nav a:hover,.nav a.active { background:var(--primary);color:#fff; }
+  .kpi-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:16px 0; }
+  .kpi-card { background:var(--card-bg);border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.08);text-align:center; }
+  .kpi-card .label { font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px; }
+  .kpi-card .value { font-size:20px;font-weight:700;margin-top:4px;color:var(--primary); }
+  .kpi-card .sub { font-size:11px;color:var(--text2);margin-top:2px; }
+  .section { margin:28px 0; }
+  .section h2 { font-size:17px;font-weight:600;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--primary); }
+  .chart-row { display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px;margin:14px 0; }
+  .chart-card { background:var(--card-bg);border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  .chart-card h3 { font-size:13px;color:var(--text2);margin-bottom:10px; }
+  .chart-card canvas { max-height:300px; }
+  table { width:100%;border-collapse:collapse;font-size:12px;background:var(--card-bg);border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  th { background:#f1f3f4;padding:9px 7px;text-align:left;font-weight:600;font-size:11px;color:var(--text2);position:sticky;top:0;white-space:nowrap; }
+  td { padding:7px;border-top:1px solid #f1f3f4;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  td.num { text-align:right;font-variant-numeric:tabular-nums; }
+  tr:hover { background:#f8f9ff; }
+  .table-wrap { overflow-x:auto;max-height:520px;overflow-y:auto;border-radius:8px; }
+  .tab-btns { display:flex;gap:4px;margin-bottom:10px; }
+  .tab-btn { padding:7px 14px;border:1px solid var(--border);background:#fff;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s; }
+  .tab-btn.active { background:var(--primary);color:#fff;border-color:var(--primary); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  @media(max-width:768px) { .chart-row{grid-template-columns:1fr;} .kpi-grid{grid-template-columns:repeat(2,1fr);} }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>SWE オンパレ美容 × YDA パフォーマンスレポート</h1>
+  <p>データ期間: 2026-03-01 〜 2026-04-05 | 媒体: YDA (Yahoo!ディスプレイ) | 生成: 2026-04-07 20:57</p>
+</div>
+<nav class="nav">
+  <a href="#summary" class="active">サマリ</a><a href="#monthly">月別</a><a href="#daily">日別</a>
+  <a href="#campaign">キャンペーン</a><a href="#adgroup">アドグループ</a><a href="#ad">アド</a>
+  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a>
+</nav>
+<div class="container">
+
+<!-- SUMMARY -->
+<section id="summary" class="section">
+  <h2>📊 全体サマリ</h2>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">直近3ヶ月 (YDA)</p>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="label">総費用</div><div class="value">¥429,044</div><div class="sub">3ヶ月</div></div>
+    <div class="kpi-card"><div class="label">IMP</div><div class="value">1,872,312</div></div>
+    <div class="kpi-card"><div class="label">Click</div><div class="value">4,694</div></div>
+    <div class="kpi-card"><div class="label">CTR</div><div class="value">0.25%</div></div>
+    <div class="kpi-card"><div class="label">CPC</div><div class="value">¥91</div></div>
+    <div class="kpi-card"><div class="label">CV</div><div class="value">267.0</div></div>
+    <div class="kpi-card"><div class="label">CPA</div><div class="value">¥1,607</div></div>
+    <div class="kpi-card"><div class="label">CPM</div><div class="value">¥229</div></div>
+  </div>
+  <p style="font-size:12px;color:var(--text2);margin:12px 0 8px;">直近3週間</p>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="label">費用(3W)</div><div class="value">¥230,274</div></div>
+    <div class="kpi-card"><div class="label">IMP(3W)</div><div class="value">1,024,572</div></div>
+    <div class="kpi-card"><div class="label">Click(3W)</div><div class="value">2,556</div></div>
+    <div class="kpi-card"><div class="label">CV(3W)</div><div class="value">128.0</div></div>
+    <div class="kpi-card"><div class="label">CPA(3W)</div><div class="value">¥1,799</div></div>
+    <div class="kpi-card"><div class="label">CTR(3W)</div><div class="value">0.25%</div></div>
+  </div>
+</section>
+
+<!-- MONTHLY -->
+<section id="monthly" class="section">
+  <h2>📅 月別推移</h2>
+  <div class="chart-row">
+    <div class="chart-card"><h3>費用 & CV数</h3><canvas id="mChart1"></canvas></div>
+    <div class="chart-card"><h3>CPA推移</h3><canvas id="mChart2"></canvas></div>
+  </div>
+</section>
+
+<!-- DAILY -->
+<section id="daily" class="section">
+  <h2>📈 日別推移（直近3週間）</h2>
+  <div class="chart-row">
+    <div class="chart-card"><h3>費用 & クリック</h3><canvas id="dChart1"></canvas></div>
+    <div class="chart-card"><h3>CV & CPA</h3><canvas id="dChart2"></canvas></div>
+  </div>
+</section>
+
+<!-- CAMPAIGN -->
+<section id="campaign" class="section">
+  <h2>🎯 キャンペーン別（直近3週間）</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>キャンペーン名</th><th>費用</th><th>IMP</th><th>Click</th><th>CTR</th><th>CPC</th><th>CV</th><th>CPA</th></tr></thead>
+    <tbody><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥230,274</td><td class="num">1,024,572</td>
+          <td class="num">2,556</td><td class="num">0.25%</td>
+          <td class="num">¥90</td><td class="num">128.0</td>
+          <td class="num">¥1,799</td></tr></tbody>
+  </table></div>
+</section>
+
+<!-- ADGROUP -->
+<section id="adgroup" class="section">
+  <h2>📁 アドグループ別（直近3週間）</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>キャンペーン</th><th>アドグループ</th><th>費用</th><th>IMP</th><th>Click</th><th>CTR</th><th>CV</th><th>CPA</th></tr></thead>
+    <tbody><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_1200x628</td>
+          <td class="num">¥50,219</td><td class="num">156,854</td>
+          <td class="num">401</td><td class="num">0.26%</td>
+          <td class="num">26.0</td><td class="num">¥1,932</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Res_1200x628</td>
+          <td class="num">¥44,408</td><td class="num">51,912</td>
+          <td class="num">198</td><td class="num">0.38%</td>
+          <td class="num">20.0</td><td class="num">¥2,220</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Res_1200x628</td>
+          <td class="num">¥42,455</td><td class="num">399,374</td>
+          <td class="num">997</td><td class="num">0.25%</td>
+          <td class="num">21.0</td><td class="num">¥2,022</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Res_1200x628</td>
+          <td class="num">¥32,302</td><td class="num">107,121</td>
+          <td class="num">358</td><td class="num">0.33%</td>
+          <td class="num">23.0</td><td class="num">¥1,404</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_1200x628</td>
+          <td class="num">¥20,330</td><td class="num">127,790</td>
+          <td class="num">332</td><td class="num">0.26%</td>
+          <td class="num">13.0</td><td class="num">¥1,564</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Banner_600x500</td>
+          <td class="num">¥14,343</td><td class="num">60,875</td>
+          <td class="num">90</td><td class="num">0.15%</td>
+          <td class="num">11.0</td><td class="num">¥1,304</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Res_1200x628</td>
+          <td class="num">¥9,173</td><td class="num">28,503</td>
+          <td class="num">70</td><td class="num">0.25%</td>
+          <td class="num">2.0</td><td class="num">¥4,586</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Banner_600x500</td>
+          <td class="num">¥6,454</td><td class="num">29,836</td>
+          <td class="num">49</td><td class="num">0.16%</td>
+          <td class="num">9.0</td><td class="num">¥717</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Banner_600x500</td>
+          <td class="num">¥3,909</td><td class="num">57,219</td>
+          <td class="num">41</td><td class="num">0.07%</td>
+          <td class="num">3.0</td><td class="num">¥1,303</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Banner_600x500</td>
+          <td class="num">¥3,202</td><td class="num">2,648</td>
+          <td class="num">9</td><td class="num">0.34%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Banner_600x500</td>
+          <td class="num">¥2,038</td><td class="num">1,357</td>
+          <td class="num">7</td><td class="num">0.52%</td>
+          <td class="num">-</td><td class="num">-</td></tr><tr>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Banner_600x500</td>
+          <td class="num">¥1,441</td><td class="num">1,083</td>
+          <td class="num">4</td><td class="num">0.37%</td>
+          <td class="num">-</td><td class="num">-</td></tr></tbody>
+  </table></div>
+</section>
+
+<!-- AD -->
+<section id="ad" class="section">
+  <h2>📝 アド別（直近3週間）</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>アドグループ</th><th>アド名</th><th>費用</th><th>IMP</th><th>Click</th><th>CV</th><th>CPA</th></tr></thead>
+    <tbody><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_R...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_03_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_03_1200x628_kiwami.jp...</td>
+          <td class="num">¥16,986</td><td class="num">17,618</td>
+          <td class="num">72</td><td class="num">13.0</td>
+          <td class="num">¥1,307</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Re...</td>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥15,317</td><td class="num">132,653</td>
+          <td class="num">351</td><td class="num">6.0</td>
+          <td class="num">¥2,553</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Re...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥14,465</td><td class="num">133,079</td>
+          <td class="num">341</td><td class="num">7.0</td>
+          <td class="num">¥2,066</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_...</td>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥12,860</td><td class="num">31,635</td>
+          <td class="num">92</td><td class="num">10.0</td>
+          <td class="num">¥1,286</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Re...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥12,673</td><td class="num">133,642</td>
+          <td class="num">305</td><td class="num">8.0</td>
+          <td class="num">¥1,584</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_R...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥12,215</td><td class="num">17,097</td>
+          <td class="num">60</td><td class="num">1.0</td>
+          <td class="num">¥12,215</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥11,937</td><td class="num">36,280</td>
+          <td class="num">135</td><td class="num">5.0</td>
+          <td class="num">¥2,387</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面...</td>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥11,121</td><td class="num">35,434</td>
+          <td class="num">124</td><td class="num">12.0</td>
+          <td class="num">¥927</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_...</td>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥10,658</td><td class="num">30,937</td>
+          <td class="num">70</td><td class="num">7.0</td>
+          <td class="num">¥1,523</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_R...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥9,801</td><td class="num">9,634</td>
+          <td class="num">41</td><td class="num">4.0</td>
+          <td class="num">¥2,450</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥9,244</td><td class="num">35,407</td>
+          <td class="num">99</td><td class="num">6.0</td>
+          <td class="num">¥1,541</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥9,173</td><td class="num">31,208</td>
+          <td class="num">80</td><td class="num">6.0</td>
+          <td class="num">¥1,529</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥8,937</td><td class="num">31,637</td>
+          <td class="num">77</td><td class="num">1.0</td>
+          <td class="num">¥8,937</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Ba...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥8,647</td><td class="num">30,445</td>
+          <td class="num">53</td><td class="num">9.0</td>
+          <td class="num">¥961</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Res_...</td>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_03_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_03_1200x628_kiwami.jp...</td>
+          <td class="num">¥8,591</td><td class="num">31,437</td>
+          <td class="num">82</td><td class="num">2.0</td>
+          <td class="num">¥4,296</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥7,043</td><td class="num">40,194</td>
+          <td class="num">113</td><td class="num">3.0</td>
+          <td class="num">¥2,348</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_...</td>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥6,227</td><td class="num">40,559</td>
+          <td class="num">99</td><td class="num">8.0</td>
+          <td class="num">¥778</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥5,778</td><td class="num">40,414</td>
+          <td class="num">98</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_Y面_Ba...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥5,696</td><td class="num">30,430</td>
+          <td class="num">37</td><td class="num">2.0</td>
+          <td class="num">¥2,848</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_R...</td>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥5,405</td><td class="num">7,563</td>
+          <td class="num">25</td><td class="num">2.0</td>
+          <td class="num">¥2,702</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Bann...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥2,921</td><td class="num">9,809</td>
+          <td class="num">23</td><td class="num">3.0</td>
+          <td class="num">¥974</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_R...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jp...</td>
+          <td class="num">¥2,690</td><td class="num">5,669</td>
+          <td class="num">21</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_R...</td>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥2,181</td><td class="num">5,718</td>
+          <td class="num">16</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Bann...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥2,015</td><td class="num">19,146</td>
+          <td class="num">18</td><td class="num">1.0</td>
+          <td class="num">¥2,015</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Bann...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥1,792</td><td class="num">10,151</td>
+          <td class="num">14</td><td class="num">3.0</td>
+          <td class="num">¥597</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_R...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥1,758</td><td class="num">5,768</td>
+          <td class="num">12</td><td class="num">2.0</td>
+          <td class="num">¥879</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_Y面_Bann...</td>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥1,741</td><td class="num">9,876</td>
+          <td class="num">12</td><td class="num">3.0</td>
+          <td class="num">¥580</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_R...</td>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥1,556</td><td class="num">5,768</td>
+          <td class="num">12</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥1,479</td><td class="num">862</td>
+          <td class="num">4</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_0-3日_LINE面_B...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥1,306</td><td class="num">341</td>
+          <td class="num">3</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥1,176</td><td class="num">860</td>
+          <td class="num">3</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Bann...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥1,097</td><td class="num">18,839</td>
+          <td class="num">13</td><td class="num">1.0</td>
+          <td class="num">¥1,097</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_B...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg...</td>
+          <td class="num">¥1,049</td><td class="num">455</td>
+          <td class="num">4</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_R...</td>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_03_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_03_1200x628_kiwami.jp...</td>
+          <td class="num">¥988</td><td class="num">5,580</td>
+          <td class="num">9</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Bann...</td>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥797</td><td class="num">19,234</td>
+          <td class="num">10</td><td class="num">1.0</td>
+          <td class="num">¥797</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_...</td>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_03_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_03_1200x628_kiwami.jp...</td>
+          <td class="num">¥694</td><td class="num">3,278</td>
+          <td class="num">13</td><td class="num">2.0</td>
+          <td class="num">¥347</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_B...</td>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥667</td><td class="num">452</td>
+          <td class="num">2</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_1200x628">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_Y面_Res_...</td>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jp...</td>
+          <td class="num">¥588</td><td class="num">3,345</td>
+          <td class="num">9</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_TOPページ_0-3日_LINE面...</td>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥547</td><td class="num">926</td>
+          <td class="num">2</td><td class="num">-</td>
+          <td class="num">-</td></tr><tr>
+          <td title="50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_Banner_600x500">50ALL_性全_SP_OS全_W/A_商品詳細_4-7日_LINE面_B...</td>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg...</td>
+          <td class="num">¥323</td><td class="num">450</td>
+          <td class="num">1</td><td class="num">-</td>
+          <td class="num">-</td></tr></tbody>
+  </table></div>
+</section>
+
+<!-- TARGETING -->
+<section id="targeting" class="section">
+  <h2>🎯 ターゲティング・管理区分</h2>
+  <div class="chart-row">
+    <div class="chart-card"><h3>RTG/NonRTG 費用</h3><canvas id="dsChart"></canvas></div>
+    <div class="chart-card"><h3>ターゲティング別 費用</h3><canvas id="tgtChart"></canvas></div>
+  </div>
+  <div style="margin-top:16px;">
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="swTab(event,'tgt-t')">ターゲティング別</button>
+      <button class="tab-btn" onclick="swTab(event,'mgmt-t')">管理区分別</button>
+    </div>
+    <div id="tgt-t" class="tab-content active">
+      <div class="table-wrap"><table>
+        <thead><tr><th>ターゲティング</th><th>費用</th><th>IMP</th><th>Click</th><th>CTR</th><th>CV</th><th>CPA</th></tr></thead>
+        <tbody><tr>
+          <td>RTG</td>
+          <td class="num">¥230,274</td><td class="num">1,024,572</td>
+          <td class="num">2,556</td><td class="num">0.25%</td>
+          <td class="num">128.0</td><td class="num">¥1,799</td></tr></tbody>
+      </table></div>
+    </div>
+    <div id="mgmt-t" class="tab-content">
+      <div class="table-wrap"><table>
+        <thead><tr><th>管理区分</th><th>費用</th><th>IMP</th><th>Click</th><th>CV</th><th>CPA</th></tr></thead>
+        <tbody><tr>
+          <td>通常活動</td>
+          <td class="num">¥230,274</td><td class="num">1,024,572</td>
+          <td class="num">2,556</td><td class="num">128.0</td>
+          <td class="num">¥1,799</td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- CREATIVE -->
+<section id="creative" class="section">
+  <h2>🎨 クリエイティブ分析（直近3週間）</h2>
+  <div class="chart-row">
+    <div class="chart-card"><h3>デバイス別費用</h3><canvas id="devChart"></canvas></div>
+  </div>
+  <div class="table-wrap" style="margin-top:14px;"><table>
+    <thead><tr><th>アド名</th><th>タイプ</th><th>タイトル</th><th>テキスト</th><th>画像</th><th>費用</th><th>IMP</th><th>Click</th><th>CTR</th><th>CV</th><th>CPA</th></tr></thead>
+    <tbody><tr>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/19254339" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥56,258</td><td class="num">263,747</td>
+          <td class="num">735</td><td class="num">0.28%</td>
+          <td class="num">19.0</td><td class="num">¥2,961</td></tr><tr>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/19254338" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥49,456</td><td class="num">256,282</td>
+          <td class="num">647</td><td class="num">0.25%</td>
+          <td class="num">24.0</td><td class="num">¥2,061</td></tr><tr>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_02_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/18768007" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥36,350</td><td class="num">180,914</td>
+          <td class="num">493</td><td class="num">0.27%</td>
+          <td class="num">18.0</td><td class="num">¥2,019</td></tr><tr>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/18431813" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥29,562</td><td class="num">112,698</td>
+          <td class="num">305</td><td class="num">0.27%</td>
+          <td class="num">27.0</td><td class="num">¥1,095</td></tr><tr>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_01_600x500_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/19254341" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥17,114</td><td class="num">61,056</td>
+          <td class="num">104</td><td class="num">0.17%</td>
+          <td class="num">13.0</td><td class="num">¥1,316</td></tr><tr>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_03_1200x628_kiwami.jpg■1■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_03_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/19254340" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥16,986</td><td class="num">17,618</td>
+          <td class="num">72</td><td class="num">0.41%</td>
+          <td class="num">13.0</td><td class="num">¥1,307</td></tr><tr>
+          <td title="20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_kiwami.jpg■Q99">20251107■onpr_yn_rg_2s_251028_y7_yo_02_600x500_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/19254337" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥10,731</td><td class="num">61,105</td>
+          <td class="num">70</td><td class="num">0.11%</td>
+          <td class="num">6.0</td><td class="num">¥1,789</td></tr><tr>
+          <td title="20250717■onpr_yn_rg_2s_250620_y5_yo_03_1200x628_kiwami.jpg■1■Q76">20250717■onpr_yn_rg_2s_250620_y5_yo_03_1200x628...</td>
+          <td>RESPONSIVE_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/18431815" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥10,274</td><td class="num">40,295</td>
+          <td class="num">104</td><td class="num">0.26%</td>
+          <td class="num">4.0</td><td class="num">¥2,568</td></tr><tr>
+          <td title="20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_kiwami.jpg■Q76">20250717■onpr_yn_rg_2s_250707_b5_ki_02_600x500_...</td>
+          <td>BANNER_AD</td>
+          <td title=""></td>
+          <td title=""></td>
+          <td><img src="https://media-yahoo-display.opelake.com/1001585808/image/18768012" style="max-width:60px;max-height:40px;" onerror="this.style.display='none'"></td>
+          <td class="num">¥3,543</td><td class="num">30,857</td>
+          <td class="num">26</td><td class="num">0.08%</td>
+          <td class="num">4.0</td><td class="num">¥886</td></tr></tbody>
+  </table></div>
+</section>
+
+<!-- PRIORITY -->
+<section id="priority" class="section">
+  <h2>⚡ 優先順位</h2>
+  <p style="font-size:11px;color:var(--text2);margin-bottom:10px;">スコア = 費用規模(50%) + 効率性(30%) + CV量(20%)</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>順位</th><th>キャンペーン</th><th>費用</th><th>CV</th><th>CPA</th><th>スコア</th></tr></thead>
+    <tbody><tr>
+          <td>🔴 1</td>
+          <td title="CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT">CA_恒常_美容onpr_有2_RTG_性全_SP_OS全_商品_50ALL_複数FMT</td>
+          <td class="num">¥230,274</td><td class="num">128.0</td>
+          <td class="num">¥1,799</td><td class="num">70.0</td></tr></tbody>
+  </table></div>
+</section>
+
+</div>
+<script>
+const C=['#1a73e8','#db4437','#f4b400','#0f9d58','#ab47bc','#00acc1','#ff7043','#5c6bc0','#26a69a','#ec407a','#7e57c2','#42a5f5'];
+function swTab(e,id){ document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); e.target.classList.add('active'); }
+document.querySelectorAll('.nav a').forEach(a=>{ a.addEventListener('click',function(e){ e.preventDefault(); document.querySelector(this.getAttribute('href')).scrollIntoView({behavior:'smooth'}); document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); this.classList.add('active'); }); });
+</script>
+<script>
+new Chart(document.getElementById('mChart1'),{type:'bar',data:{labels:["2026-03", "2026-04"],datasets:[{label:'費用(¥)',data:[361824.0, 67220.0],backgroundColor:'rgba(26,115,232,0.7)',yAxisID:'y',borderRadius:4},{label:'CV',data:[246.0, 21.0],type:'line',borderColor:'#db4437',yAxisID:'y1',tension:.3,pointRadius:5}]},options:{responsive:true,interaction:{mode:'index',intersect:false},scales:{y:{position:'left',title:{display:true,text:'費用'},ticks:{callback:v=>'¥'+(v/1e6).toFixed(1)+'M'}},y1:{position:'right',title:{display:true,text:'CV'},grid:{drawOnChartArea:false}}}}});
+new Chart(document.getElementById('mChart2'),{type:'bar',data:{labels:["2026-03", "2026-04"],datasets:[{label:'CPA(¥)',data:[1471.0, 3201.0],backgroundColor:'rgba(244,180,0,0.7)',borderRadius:4}]},options:{responsive:true,scales:{y:{ticks:{callback:v=>'¥'+v.toLocaleString()}}}}});
+new Chart(document.getElementById('dChart1'),{type:'line',data:{labels:["2026-03-15", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-21", "2026-03-22", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", "2026-03-29", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05"],datasets:[{label:'費用',data:[12783.0, 10797.0, 11047.0, 9677.0, 5897.0, 7786.0, 11594.0, 6393.0, 6227.0, 6456.0, 8608.0, 11108.0, 11302.0, 9245.0, 10231.0, 10286.0, 13618.0, 12717.0, 12295.0, 13644.0, 15029.0, 13536.0],borderColor:'#1a73e8',fill:true,backgroundColor:'rgba(26,115,232,0.06)',yAxisID:'y',tension:.3},{label:'Click',data:[154.0, 104.0, 106.0, 98.0, 69.0, 92.0, 90.0, 76.0, 68.0, 79.0, 92.0, 106.0, 125.0, 86.0, 109.0, 103.0, 158.0, 163.0, 142.0, 168.0, 184.0, 184.0],borderColor:'#0f9d58',fill:true,backgroundColor:'rgba(15,157,88,0.06)',yAxisID:'y1',tension:.3}]},options:{responsive:true,interaction:{mode:'index',intersect:false},scales:{x:{ticks:{maxRotation:45,font:{size:9}}},y:{position:'left',ticks:{callback:v=>'¥'+(v/1e4).toFixed(0)+'万'}},y1:{position:'right',grid:{drawOnChartArea:false}}}}});
+new Chart(document.getElementById('dChart2'),{type:'bar',data:{labels:["2026-03-15", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-21", "2026-03-22", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28", "2026-03-29", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05"],datasets:[{label:'CV',data:[14.0, 17.0, 10.0, 5.0, 6.0, 1.0, 6.0, 7.0, 1.0, 3.0, 10.0, 3.0, 8.0, 4.0, 4.0, 7.0, 1.0, 5.0, 1.0, 8.0, 4.0, 3.0],backgroundColor:'rgba(219,68,55,0.6)',yAxisID:'y',borderRadius:3},{label:'CPA',data:[913.0, 635.0, 1105.0, 1935.0, 983.0, 7786.0, 1932.0, 913.0, 6227.0, 2152.0, 861.0, 3703.0, 1413.0, 2311.0, 2558.0, 1469.0, 13618.0, 2543.0, 12295.0, 1706.0, 3757.0, 4512.0],type:'line',borderColor:'#f4b400',yAxisID:'y1',tension:.3,pointRadius:3}]},options:{responsive:true,interaction:{mode:'index',intersect:false},scales:{x:{ticks:{maxRotation:45,font:{size:9}}},y:{position:'left',title:{display:true,text:'CV'}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>'¥'+v.toLocaleString()}}}}});
+new Chart(document.getElementById('dsChart'),{type:'doughnut',data:{labels:["SWE_RTG", "SWE_NonRTG"],datasets:[{data:[361824.0, 67220.0],backgroundColor:C.slice(0,5)}]},options:{responsive:true,plugins:{legend:{position:'right'}}}});
+new Chart(document.getElementById('tgtChart'),{type:'doughnut',data:{labels:["RTG"],datasets:[{data:[230274.0],backgroundColor:C.slice(3,12)}]},options:{responsive:true,plugins:{legend:{position:'right'}}}});
+new Chart(document.getElementById('devChart'),{type:'bar',data:{labels:["SP", "PC+TAB"],datasets:[{label:'費用',data:[230274.0, 0.0],backgroundColor:C.slice(0,5),borderRadius:6}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>'¥'+(v/1e4).toFixed(0)+'万'}}}}});
+</script>
+</body></html>
