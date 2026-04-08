@@ -150,6 +150,46 @@ def fmt_yen(v):
     if v == 0 or pd.isna(v): return '-'
     return f'¥{v:,.0f}'
 
+TARGET_CPA_MAP = {
+    'Airペイ × YDA': 38461,
+    'SWE オンパレ通常 × YDA': 2500,
+    'SWE オンパレ美容 × YDA': 2500,
+    'SWE オンパレ美容 × GDN': 2500,
+    'SWE ロコモア × YDA': 11000,
+    'Airペイ × GDN': 38461,
+}
+
+def find_seisa_targets(df, target_cpa, threshold_pct=1.3, min_days=10):
+    """Find items with CPA >= threshold AND 10+ days delivery at campaign/adgroup/ad level."""
+    threshold = target_cpa * threshold_pct
+    results = {}
+    for level, col in [('campaign', 'campaign_name'), ('adgroup', 'adgroup_name'), ('ad', 'ad_name')]:
+        flagged = []
+        for name, g in df.groupby(col):
+            if pd.isna(name) or str(name).strip() == '':
+                continue
+            days = g['report_date'].nunique()
+            cost = g['cost'].sum()
+            cv = g['conversion'].sum() if 'conversion' in g.columns else 0
+            click = g['click'].sum()
+            imp = g['impression'].sum()
+            if cost == 0:
+                continue
+            cpa = cost / cv if cv > 0 else 999999
+            cvr = (cv / click * 100) if click > 0 else 0
+            ctr = (click / imp * 100) if imp > 0 else 0
+            ratio = (cpa / target_cpa * 100) if target_cpa > 0 else 0
+
+            if days >= min_days and cpa >= threshold:
+                flagged.append({
+                    'name': name, 'cost': cost, 'cv': cv, 'cpa': cpa,
+                    'days': days, 'click': click, 'cvr': cvr, 'ctr': ctr,
+                    'ratio': ratio, 'imp': imp,
+                })
+        flagged.sort(key=lambda x: -x['cost'])
+        results[level] = flagged
+    return results
+
 def generate_report(report_name, df, color1, color2):
     if len(df) == 0:
         return '<html><body><h1>データなし</h1></body></html>'
@@ -380,7 +420,7 @@ def generate_report(report_name, df, color1, color2):
 <nav class="nav">
   <a href="#summary" class="active">サマリ</a><a href="#monthly">月別</a><a href="#daily">日別</a>
   <a href="#campaign">キャンペーン</a><a href="#adgroup">アドグループ</a><a href="#ad">アド</a>
-  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a>
+  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a><a href="#seisa" style="background:#dc2626;color:#fff;">🔍 精査対象</a>
 </nav>
 <div class="container">
 
@@ -503,6 +543,16 @@ def generate_report(report_name, df, color1, color2):
   </table></div>
 </section>
 
+<!-- SEISA -->
+<section id="seisa" class="section">
+  <h2 style="color:#dc2626;">🔍 精査対象ピックアップ</h2>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:14px;padding:10px;background:#fef2f2;border-radius:8px;border-left:4px solid #dc2626;">
+    条件: <strong>CPA が目標の130%以上</strong> かつ <strong>配信10日以上</strong> のキャンペーン・アドグループ・アドを自動抽出。
+    目標CPA: <strong>__SEISA_TGT__</strong> → 精査閾値: <strong>__SEISA_THR__</strong>
+  </p>
+  __SEISA_HTML__
+</section>
+
 </div>
 <script>
 const C=['#1a73e8','#db4437','#f4b400','#0f9d58','#ab47bc','#00acc1','#ff7043','#5c6bc0','#26a69a','#ec407a','#7e57c2','#42a5f5'];
@@ -534,6 +584,65 @@ new Chart(document.getElementById('devChart'),{type:'bar',data:{labels:__DEVL__,
     )
 
     html = html.replace('__CHARTS_SCRIPT__', charts_js)
+
+    # --- Seisa (精査) section ---
+    target_cpa = TARGET_CPA_MAP.get(report_name, 0)
+    seisa_threshold = target_cpa * 1.3
+    html = html.replace('__SEISA_TGT__', fmt_yen(target_cpa))
+    html = html.replace('__SEISA_THR__', fmt_yen(seisa_threshold))
+
+    if target_cpa > 0:
+        seisa = find_seisa_targets(df, target_cpa)
+        seisa_html_parts = []
+        level_labels = {'campaign': '🎯 キャンペーン', 'adgroup': '📁 アドグループ', 'ad': '📝 アド'}
+        level_colors = {'campaign': '#991b1b', 'adgroup': '#9a3412', 'ad': '#92400e'}
+
+        for level in ['campaign', 'adgroup', 'ad']:
+            items = seisa[level]
+            lbl = level_labels[level]
+            lc = level_colors[level]
+            count = len(items)
+
+            if count == 0:
+                seisa_html_parts.append(f'<div style="margin-bottom:16px;"><h3 style="font-size:14px;margin-bottom:6px;">{lbl} <span style="color:#16a34a;font-size:12px;">✅ 精査対象なし</span></h3></div>')
+                continue
+
+            rows = ''
+            for r in items[:15]:
+                nm = str(r['name'])
+                if len(nm) > 65:
+                    nm = nm[:62] + '...'
+                cpa_display = fmt_yen(r['cpa']) if r['cpa'] < 900000 else 'CV無し'
+                ratio_display = f'{r["ratio"]:.0f}%' if r['cpa'] < 900000 else '-'
+                severity = '🔴' if r['ratio'] >= 200 or r['cpa'] >= 900000 else '🟡'
+                rows += f'''<tr style="background:#fff9f9;">
+                  <td>{severity}</td>
+                  <td title="{r['name']}" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">{nm}</td>
+                  <td class="num">{fmt_yen(r['cost'])}</td>
+                  <td class="num">{r['days']}日</td>
+                  <td class="num">{fmt_num(r['click'])}</td>
+                  <td class="num">{fmt_num(r['cv'], 0)}</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">{cpa_display}</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">{ratio_display}</td>
+                  <td class="num">{fmt_pct(r['cvr'])}</td>
+                </tr>'''
+
+            seisa_html_parts.append(f'''<div style="margin-bottom:20px;">
+              <h3 style="font-size:14px;margin-bottom:8px;">{lbl} <span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;">{count}件</span></h3>
+              <div class="table-wrap"><table>
+                <thead><tr><th></th><th>名前</th><th>費用</th><th>配信日数</th><th>Click</th><th>CV</th><th>CPA</th><th>目標比</th><th>CVR</th></tr></thead>
+                <tbody>{rows}</tbody>
+              </table></div>
+            </div>''')
+
+        seisa_total = sum(len(seisa[l]) for l in ['campaign', 'adgroup', 'ad'])
+        summary_text = f'<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:#991b1b;"><strong>精査対象 合計: キャンペーン{len(seisa["campaign"])}件 / アドグループ{len(seisa["adgroup"])}件 / アド{len(seisa["ad"])}件</strong> — 目標CPA {fmt_yen(target_cpa)} の130%（{fmt_yen(seisa_threshold)}）以上 × 配信10日以上</div>'
+        seisa_html = summary_text + '\n'.join(seisa_html_parts)
+    else:
+        seisa_html = '<p style="color:#94a3b8;">目標CPAが未設定のため精査対象の抽出ができません。targets.csvに目標CPAを設定してください。</p>'
+
+    html = html.replace('__SEISA_HTML__', seisa_html)
+
     return html
 
 ###############################################################################

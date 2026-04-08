@@ -41,27 +41,15 @@
   @media(max-width:768px) { .chart-row{grid-template-columns:1fr;} .kpi-grid{grid-template-columns:repeat(2,1fr);} }
 </style>
 </head>
-<body><div id="lockScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#f8fafc;z-index:99999;display:flex;align-items:center;justify-content:center;">
-<div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:40px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08);max-width:400px;">
-<div style="font-size:40px;margin-bottom:16px;">🔒</div>
-<h2 style="font-size:20px;color:#1e293b;margin-bottom:8px;">レポート閲覧認証</h2>
-<p style="font-size:13px;color:#94a3b8;margin-bottom:20px;">パスワードを入力してください</p>
-<input id="pwInput" type="password" placeholder="パスワード" style="width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:16px;outline:none;margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkPw()">
-<button onclick="checkPw()" style="width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">認証</button>
-<p id="pwError" style="color:#dc2626;font-size:12px;margin-top:8px;display:none;">パスワードが違います</p>
-</div></div>
-<script>
-function checkPw(){var p=document.getElementById("pwInput").value;if(p==="CA"){document.getElementById("lockScreen").style.display="none";document.body.style.overflow="auto";}else{document.getElementById("pwError").style.display="block";document.getElementById("pwInput").value="";document.getElementById("pwInput").focus();}}
-document.body.style.overflow="hidden";
-</script>
+<body>
 <div class="header">
   <h1>Airペイ × GDN パフォーマンスレポート</h1>
-  <p>データ期間: 2026-03-01 〜 2026-04-05 | 媒体: YDA (Yahoo!ディスプレイ) | 生成: 2026-04-07 20:57</p>
+  <p>データ期間: 2026-03-01 〜 2026-04-05 | 媒体: YDA (Yahoo!ディスプレイ) | 生成: 2026-04-08 13:06</p>
 </div>
 <nav class="nav">
   <a href="#summary" class="active">サマリ</a><a href="#monthly">月別</a><a href="#daily">日別</a>
   <a href="#campaign">キャンペーン</a><a href="#adgroup">アドグループ</a><a href="#ad">アド</a>
-  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a>
+  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a><a href="#seisa" style="background:#dc2626;color:#fff;">🔍 精査対象</a>
 </nav>
 <div class="container">
 
@@ -506,6 +494,70 @@ document.body.style.overflow="hidden";
           <td class="num">¥93,847</td><td class="num">2.3</td>
           <td class="num">¥40,593</td><td class="num">29.1</td></tr></tbody>
   </table></div>
+</section>
+
+<!-- SEISA -->
+<section id="seisa" class="section">
+  <h2 style="color:#dc2626;">🔍 精査対象ピックアップ</h2>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:14px;padding:10px;background:#fef2f2;border-radius:8px;border-left:4px solid #dc2626;">
+    条件: <strong>CPA が目標の130%以上</strong> かつ <strong>配信10日以上</strong> のキャンペーン・アドグループ・アドを自動抽出。
+    目標CPA: <strong>¥38,461</strong> → 精査閾値: <strong>¥49,999</strong>
+  </p>
+  <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:#991b1b;"><strong>精査対象 合計: キャンペーン0件 / アドグループ2件 / アド2件</strong> — 目標CPA ¥38,461 の130%（¥49,999）以上 × 配信10日以上</div><div style="margin-bottom:16px;"><h3 style="font-size:14px;margin-bottom:6px;">🎯 キャンペーン <span style="color:#16a34a;font-size:12px;">✅ 精査対象なし</span></h3></div>
+<div style="margin-bottom:20px;">
+              <h3 style="font-size:14px;margin-bottom:8px;">📁 アドグループ <span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;">2件</span></h3>
+              <div class="table-wrap"><table>
+                <thead><tr><th></th><th>名前</th><th>費用</th><th>配信日数</th><th>Click</th><th>CV</th><th>CPA</th><th>目標比</th><th>CVR</th></tr></thead>
+                <tbody><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="Airペイ_申込_DemG_RM_フォーム_2_7_最適化TGON" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">Airペイ_申込_DemG_RM_フォーム_2_7_最適化TGON</td>
+                  <td class="num">¥274,469</td>
+                  <td class="num">28日</td>
+                  <td class="num">3,034</td>
+                  <td class="num">4</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥62,482</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">162%</td>
+                  <td class="num">0.14%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="Airペイ_申込_DemG_RM_フォーム_8_30" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">Airペイ_申込_DemG_RM_フォーム_8_30</td>
+                  <td class="num">¥53,139</td>
+                  <td class="num">36日</td>
+                  <td class="num">293</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥74,058</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">193%</td>
+                  <td class="num">0.24%</td>
+                </tr></tbody>
+              </table></div>
+            </div>
+<div style="margin-bottom:20px;">
+              <h3 style="font-size:14px;margin-bottom:8px;">📝 アド <span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;">2件</span></h3>
+              <div class="table-wrap"><table>
+                <thead><tr><th></th><th>名前</th><th>費用</th><th>配信日数</th><th>Click</th><th>CV</th><th>CPA</th><th>目標比</th><th>CVR</th></tr></thead>
+                <tbody><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="広告 3" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">広告 3</td>
+                  <td class="num">¥208,685</td>
+                  <td class="num">36日</td>
+                  <td class="num">1,897</td>
+                  <td class="num">4</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥52,897</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">138%</td>
+                  <td class="num">0.21%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="広告 5" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">広告 5</td>
+                  <td class="num">¥51,023</td>
+                  <td class="num">36日</td>
+                  <td class="num">441</td>
+                  <td class="num">0</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">CV無し</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">-</td>
+                  <td class="num">0.00%</td>
+                </tr></tbody>
+              </table></div>
+            </div>
 </section>
 
 </div>

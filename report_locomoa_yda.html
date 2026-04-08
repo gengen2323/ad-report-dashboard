@@ -41,27 +41,15 @@
   @media(max-width:768px) { .chart-row{grid-template-columns:1fr;} .kpi-grid{grid-template-columns:repeat(2,1fr);} }
 </style>
 </head>
-<body><div id="lockScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#f8fafc;z-index:99999;display:flex;align-items:center;justify-content:center;">
-<div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:40px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08);max-width:400px;">
-<div style="font-size:40px;margin-bottom:16px;">🔒</div>
-<h2 style="font-size:20px;color:#1e293b;margin-bottom:8px;">レポート閲覧認証</h2>
-<p style="font-size:13px;color:#94a3b8;margin-bottom:20px;">パスワードを入力してください</p>
-<input id="pwInput" type="password" placeholder="パスワード" style="width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:16px;outline:none;margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkPw()">
-<button onclick="checkPw()" style="width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">認証</button>
-<p id="pwError" style="color:#dc2626;font-size:12px;margin-top:8px;display:none;">パスワードが違います</p>
-</div></div>
-<script>
-function checkPw(){var p=document.getElementById("pwInput").value;if(p==="CA"){document.getElementById("lockScreen").style.display="none";document.body.style.overflow="auto";}else{document.getElementById("pwError").style.display="block";document.getElementById("pwInput").value="";document.getElementById("pwInput").focus();}}
-document.body.style.overflow="hidden";
-</script>
+<body>
 <div class="header">
   <h1>SWE ロコモア × YDA パフォーマンスレポート</h1>
-  <p>データ期間: 2026-03-01 〜 2026-04-05 | 媒体: YDA (Yahoo!ディスプレイ) | 生成: 2026-04-07 20:57</p>
+  <p>データ期間: 2026-03-01 〜 2026-04-05 | 媒体: YDA (Yahoo!ディスプレイ) | 生成: 2026-04-08 13:06</p>
 </div>
 <nav class="nav">
   <a href="#summary" class="active">サマリ</a><a href="#monthly">月別</a><a href="#daily">日別</a>
   <a href="#campaign">キャンペーン</a><a href="#adgroup">アドグループ</a><a href="#ad">アド</a>
-  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a>
+  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a><a href="#seisa" style="background:#dc2626;color:#fff;">🔍 精査対象</a>
 </nav>
 <div class="container">
 
@@ -1037,6 +1025,386 @@ document.body.style.overflow="hidden";
           <td class="num">¥84,793</td><td class="num">6.0</td>
           <td class="num">¥14,132</td><td class="num">9.6</td></tr></tbody>
   </table></div>
+</section>
+
+<!-- SEISA -->
+<section id="seisa" class="section">
+  <h2 style="color:#dc2626;">🔍 精査対象ピックアップ</h2>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:14px;padding:10px;background:#fef2f2;border-radius:8px;border-left:4px solid #dc2626;">
+    条件: <strong>CPA が目標の130%以上</strong> かつ <strong>配信10日以上</strong> のキャンペーン・アドグループ・アドを自動抽出。
+    目標CPA: <strong>¥11,000</strong> → 精査閾値: <strong>¥14,300</strong>
+  </p>
+  <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:#991b1b;"><strong>精査対象 合計: キャンペーン5件 / アドグループ44件 / アド67件</strong> — 目標CPA ¥11,000 の130%（¥14,300）以上 × 配信10日以上</div><div style="margin-bottom:20px;">
+              <h3 style="font-size:14px;margin-bottom:8px;">🎯 キャンペーン <span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;">5件</span></h3>
+              <div class="table-wrap"><table>
+                <thead><tr><th></th><th>名前</th><th>費用</th><th>配信日数</th><th>Click</th><th>CV</th><th>CPA</th><th>目標比</th><th>CVR</th></tr></thead>
+                <tbody><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">CA_恒常_lcmr_有2_ADCLICK_性全_SP_OS全_商品_50ALL_複数FMT</td>
+                  <td class="num">¥229,113</td>
+                  <td class="num">36日</td>
+                  <td class="num">3,583</td>
+                  <td class="num">13</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥17,624</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">160%</td>
+                  <td class="num">0.36%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_SP_OS全_商品_50ALL_複数FMT" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">CA_恒常_lcmr_有2_高度なセグメント_性全_SP_OS全_商品_50ALL_複数FMT</td>
+                  <td class="num">¥160,942</td>
+                  <td class="num">36日</td>
+                  <td class="num">3,832</td>
+                  <td class="num">8</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥20,118</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">183%</td>
+                  <td class="num">0.21%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">CA_恒常_lcmr_有2_スマタゲ_性全_PC_OS全_商品_50ALL_複数FMT</td>
+                  <td class="num">¥140,793</td>
+                  <td class="num">34日</td>
+                  <td class="num">1,450</td>
+                  <td class="num">8</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥17,599</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">160%</td>
+                  <td class="num">0.55%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_商品_50ALL_複数FMT" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_商品_50ALL_複数FMT</td>
+                  <td class="num">¥24,272</td>
+                  <td class="num">36日</td>
+                  <td class="num">1,327</td>
+                  <td class="num">-</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">CV無し</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">-</td>
+                  <td class="num">-</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_筋柔軟性_50ALL_複数FMT" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">CA_恒常_lcmr_有2_高度なセグメント_性全_PC_OS全_筋柔軟性_50ALL_複数FMT</td>
+                  <td class="num">¥17,895</td>
+                  <td class="num">36日</td>
+                  <td class="num">1,336</td>
+                  <td class="num">-</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">CV無し</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">-</td>
+                  <td class="num">-</td>
+                </tr></tbody>
+              </table></div>
+            </div>
+<div style="margin-bottom:20px;">
+              <h3 style="font-size:14px;margin-bottom:8px;">📁 アドグループ <span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;">44件</span></h3>
+              <div class="table-wrap"><table>
+                <thead><tr><th></th><th>名前</th><th>費用</th><th>配信日数</th><th>Click</th><th>CV</th><th>CPA</th><th>目標比</th><th>CVR</th></tr></thead>
+                <tbody><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_指名系_-_LINEtalk面_Res_1200x628</td>
+                  <td class="num">¥163,947</td>
+                  <td class="num">36日</td>
+                  <td class="num">1,148</td>
+                  <td class="num">7</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥23,421</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">213%</td>
+                  <td class="num">0.61%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_指名系_-_LINEother面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_指名系_-_LINEother面_Res_1200x628</td>
+                  <td class="num">¥136,270</td>
+                  <td class="num">36日</td>
+                  <td class="num">467</td>
+                  <td class="num">3</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥45,423</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">413%</td>
+                  <td class="num">0.64%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Res_1200x628</td>
+                  <td class="num">¥107,415</td>
+                  <td class="num">36日</td>
+                  <td class="num">2,564</td>
+                  <td class="num">3</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥35,805</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">325%</td>
+                  <td class="num">0.12%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Ban_600x500" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_指名系_-_Y面_Ban_600x500</td>
+                  <td class="num">¥100,121</td>
+                  <td class="num">36日</td>
+                  <td class="num">1,085</td>
+                  <td class="num">7</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥14,303</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">130%</td>
+                  <td class="num">0.65%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="50ALL_性全_PC_OS全_W/A_指名系__YTOP面_Banner_600x500" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_PC_OS全_W/A_指名系__YTOP面_Banner_600x500</td>
+                  <td class="num">¥74,027</td>
+                  <td class="num">33日</td>
+                  <td class="num">886</td>
+                  <td class="num">5</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥14,805</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">135%</td>
+                  <td class="num">0.56%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_高度なセグメント_商材名_Y面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_高度なセグメント_商材名_Y面_Res_1200x628</td>
+                  <td class="num">¥69,030</td>
+                  <td class="num">36日</td>
+                  <td class="num">2,333</td>
+                  <td class="num">4</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥17,257</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">157%</td>
+                  <td class="num">0.17%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_YTOP面_Banner_600x500" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_YTOP面_Banner_600x500</td>
+                  <td class="num">¥61,210</td>
+                  <td class="num">36日</td>
+                  <td class="num">808</td>
+                  <td class="num">2</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥30,605</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">278%</td>
+                  <td class="num">0.25%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="50ALL_性全_PC_OS全_W/A_指名系_-_Y面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_PC_OS全_W/A_指名系_-_Y面_Res_1200x628</td>
+                  <td class="num">¥59,322</td>
+                  <td class="num">36日</td>
+                  <td class="num">393</td>
+                  <td class="num">4</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥14,831</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">135%</td>
+                  <td class="num">1.02%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_高度なセグメント_商材名_YTOP面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_高度なセグメント_商材名_YTOP面_Res_1200x628</td>
+                  <td class="num">¥55,881</td>
+                  <td class="num">36日</td>
+                  <td class="num">879</td>
+                  <td class="num">3</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥18,627</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">169%</td>
+                  <td class="num">0.34%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_指名系_-_高CVR|NonYJ面_Ban_600x500" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_指名系_-_高CVR|NonYJ面_Ban_600x500</td>
+                  <td class="num">¥34,480</td>
+                  <td class="num">36日</td>
+                  <td class="num">108</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥34,480</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">313%</td>
+                  <td class="num">0.93%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_Y面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_Y面_Res_1200x628</td>
+                  <td class="num">¥33,852</td>
+                  <td class="num">36日</td>
+                  <td class="num">792</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥33,852</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">308%</td>
+                  <td class="num">0.13%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_フォーム_1-14日_YTOP面_Ban_600x500" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_フォーム_1-14日_YTOP面_Ban_600x500</td>
+                  <td class="num">¥33,310</td>
+                  <td class="num">35日</td>
+                  <td class="num">151</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥33,310</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">303%</td>
+                  <td class="num">0.66%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_PC_OS全_W/A_指名系__Y面_Banner_600x500" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_PC_OS全_W/A_指名系__Y面_Banner_600x500</td>
+                  <td class="num">¥31,974</td>
+                  <td class="num">15日</td>
+                  <td class="num">225</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥31,974</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">291%</td>
+                  <td class="num">0.44%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_YTOP面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_ADクリッカー_1-14日_YTOP面_Res_1200x628</td>
+                  <td class="num">¥24,324</td>
+                  <td class="num">36日</td>
+                  <td class="num">601</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥24,324</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">221%</td>
+                  <td class="num">0.17%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="50ALL_性全_SP_OS全_W/A_指名系_-_高CVR|NonYJ面_Res_1200x628" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">50ALL_性全_SP_OS全_W/A_指名系_-_高CVR|NonYJ面_Res_1200x628</td>
+                  <td class="num">¥23,848</td>
+                  <td class="num">36日</td>
+                  <td class="num">486</td>
+                  <td class="num">-</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">CV無し</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">-</td>
+                  <td class="num">-</td>
+                </tr></tbody>
+              </table></div>
+            </div>
+<div style="margin-bottom:20px;">
+              <h3 style="font-size:14px;margin-bottom:8px;">📝 アド <span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;">67件</span></h3>
+              <div class="table-wrap"><table>
+                <thead><tr><th></th><th>名前</th><th>費用</th><th>配信日数</th><th>Click</th><th>CV</th><th>CPA</th><th>目標比</th><th>CVR</th></tr></thead>
+                <tbody><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="20251016■lcmr_yn_rg_2s_250911_z5_hj_01_1200x628_kiwami.jpg■1■Q95" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20251016■lcmr_yn_rg_2s_250911_z5_hj_01_1200x628_kiwami.jpg■1■Q95</td>
+                  <td class="num">¥178,516</td>
+                  <td class="num">36日</td>
+                  <td class="num">1,160</td>
+                  <td class="num">8</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥22,315</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">203%</td>
+                  <td class="num">0.69%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="20260129■251223Bf9Xm67zS_lcmr_yn_ng_2s_251209_z5_hj_06_1200x628_kiwami.jpg■2■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260129■251223Bf9Xm67zS_lcmr_yn_ng_2s_251209_z5_hj_06_1200x62...</td>
+                  <td class="num">¥156,300</td>
+                  <td class="num">36日</td>
+                  <td class="num">1,705</td>
+                  <td class="num">10</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥15,630</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">142%</td>
+                  <td class="num">0.59%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="20260129■251222BeJp5NAPS_lcmr_yn_ng_2s_251209_z4_hj_05_1200x628_kiwami.jpg■1■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260129■251222BeJp5NAPS_lcmr_yn_ng_2s_251209_z4_hj_05_1200x62...</td>
+                  <td class="num">¥102,530</td>
+                  <td class="num">18日</td>
+                  <td class="num">1,151</td>
+                  <td class="num">5</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥20,506</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">186%</td>
+                  <td class="num">0.43%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="20251114■lcmr_yn_ng_2s_251015_y7_hb_01_600x500_kiwami.jpg■Q95" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20251114■lcmr_yn_ng_2s_251015_y7_hb_01_600x500_kiwami.jpg■Q95</td>
+                  <td class="num">¥72,219</td>
+                  <td class="num">36日</td>
+                  <td class="num">980</td>
+                  <td class="num">5</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥14,444</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">131%</td>
+                  <td class="num">0.51%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="20260129■251219B96BTh1bS_lcmr_yn_ng_2s_251209_b5_hj_02_600x500_kiwami.jpg■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260129■251219B96BTh1bS_lcmr_yn_ng_2s_251209_b5_hj_02_600x500...</td>
+                  <td class="num">¥63,513</td>
+                  <td class="num">36日</td>
+                  <td class="num">740</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥63,513</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">577%</td>
+                  <td class="num">0.14%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="20260129■251215Bf0xmbiAS_lcmr_yn_ng_2s_251209_b5_hj_06_600x500_kiwami.jpg■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260129■251215Bf0xmbiAS_lcmr_yn_ng_2s_251209_b5_hj_06_600x500...</td>
+                  <td class="num">¥63,465</td>
+                  <td class="num">36日</td>
+                  <td class="num">539</td>
+                  <td class="num">4</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥15,866</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">144%</td>
+                  <td class="num">0.74%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="20251114■lcmr_yn_ng_2s_251015_x1_yi_01_1200x628_kiwami.jpg■1■Q95" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20251114■lcmr_yn_ng_2s_251015_x1_yi_01_1200x628_kiwami.jpg■1■Q95</td>
+                  <td class="num">¥61,660</td>
+                  <td class="num">36日</td>
+                  <td class="num">1,523</td>
+                  <td class="num">2</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥30,830</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">280%</td>
+                  <td class="num">0.13%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="20260227■lcmr_yn_ng_2s_251204_b1_hb_02_1200x628_kiwami.jpg■1■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260227■lcmr_yn_ng_2s_251204_b1_hb_02_1200x628_kiwami.jpg■1■Q98</td>
+                  <td class="num">¥56,640</td>
+                  <td class="num">27日</td>
+                  <td class="num">341</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥56,640</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">515%</td>
+                  <td class="num">0.29%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="20260129■251222BeHzE9CbS_lcmr_yn_ng_2s_251209_z4_hj_02_1200x628.jpg■2■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260129■251222BeHzE9CbS_lcmr_yn_ng_2s_251209_z4_hj_02_1200x62...</td>
+                  <td class="num">¥49,370</td>
+                  <td class="num">36日</td>
+                  <td class="num">451</td>
+                  <td class="num">1</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥49,370</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">449%</td>
+                  <td class="num">0.22%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="20251203■lcmr_yn_ng_2s_251112_a4_hb_01_1200x628_kiwami.jpg■1■Q97" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20251203■lcmr_yn_ng_2s_251112_a4_hb_01_1200x628_kiwami.jpg■1■Q97</td>
+                  <td class="num">¥49,028</td>
+                  <td class="num">19日</td>
+                  <td class="num">598</td>
+                  <td class="num">2</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥24,514</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">223%</td>
+                  <td class="num">0.33%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="20260129■251219BcKjMhVaS_lcmr_yn_ng_2s_251209_b5_hj_04_600x500_kiwami.jpg■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260129■251219BcKjMhVaS_lcmr_yn_ng_2s_251209_b5_hj_04_600x500...</td>
+                  <td class="num">¥48,888</td>
+                  <td class="num">36日</td>
+                  <td class="num">271</td>
+                  <td class="num">3</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥16,296</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">148%</td>
+                  <td class="num">1.11%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="20260324■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jpg■1■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260324■lcmr_yn_ng_2s_251212_p6_hj_01_1200x628_kiwami.jpg■1■Q98</td>
+                  <td class="num">¥47,445</td>
+                  <td class="num">12日</td>
+                  <td class="num">390</td>
+                  <td class="num">2</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥23,723</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">216%</td>
+                  <td class="num">0.51%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="20260227■lcmr_yn_ng_2s_251204_z5_yt_00_1200x628_kiwami.jpg■1■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260227■lcmr_yn_ng_2s_251204_z5_yt_00_1200x628_kiwami.jpg■1■Q98</td>
+                  <td class="num">¥45,382</td>
+                  <td class="num">34日</td>
+                  <td class="num">612</td>
+                  <td class="num">3</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥15,127</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">138%</td>
+                  <td class="num">0.49%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🟡</td>
+                  <td title="20251016■lcmr_yn_ng_2s_250911_z4_hb_01_1200x628_kiwami.jpg■1■Q94" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20251016■lcmr_yn_ng_2s_250911_z4_hb_01_1200x628_kiwami.jpg■1■Q94</td>
+                  <td class="num">¥45,243</td>
+                  <td class="num">36日</td>
+                  <td class="num">258</td>
+                  <td class="num">3</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥15,081</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">137%</td>
+                  <td class="num">1.16%</td>
+                </tr><tr style="background:#fff9f9;">
+                  <td>🔴</td>
+                  <td title="20260129■251208BfmHZmbrS_lcmr_yn_ng_2s_251209_z5_hj_04_1200x628.jpg■3■Q98" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">20260129■251208BfmHZmbrS_lcmr_yn_ng_2s_251209_z5_hj_04_1200x62...</td>
+                  <td class="num">¥45,193</td>
+                  <td class="num">36日</td>
+                  <td class="num">414</td>
+                  <td class="num">2</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">¥22,597</td>
+                  <td class="num" style="color:#dc2626;font-weight:600;">205%</td>
+                  <td class="num">0.48%</td>
+                </tr></tbody>
+              </table></div>
+            </div>
 </section>
 
 </div>
