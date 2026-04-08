@@ -190,6 +190,139 @@ def find_seisa_targets(df, target_cpa, threshold_pct=1.3, min_days=10):
         results[level] = flagged
     return results
 
+import re as _re
+
+def extract_creative_flags(ad_name):
+    """Extract visual/content flags from ad_name file naming convention."""
+    an = str(ad_name)
+    flags = {}
+
+    # Size
+    size_match = _re.search(r'(\d{3,4})[x×_](\d{3,4})', an)
+    if size_match:
+        w, h = int(size_match.group(1)), int(size_match.group(2))
+        flags['size'] = f'{w}x{h}'
+        if w == h:
+            flags['aspect'] = '正方形'
+        elif w > h and w / h > 1.5:
+            flags['aspect'] = '横長ワイド'
+        elif w > h:
+            flags['aspect'] = '横長'
+        else:
+            flags['aspect'] = '縦長'
+    else:
+        flags['size'] = '不明'
+        flags['aspect'] = '不明'
+
+    # Format
+    if an.endswith('.mp4') or 'mov' in an.lower():
+        flags['format'] = '動画'
+    else:
+        flags['format'] = '静止画'
+
+    # Creative series
+    if an.startswith('A_2'):
+        flags['series'] = 'A_2系'
+    elif an.startswith('A_3'):
+        flags['series'] = 'A_3系'
+    elif an.startswith('B_'):
+        flags['series'] = 'B系'
+    elif 'ipadcpn' in an.lower():
+        flags['series'] = 'iPadキャンペーン'
+    elif 'kiwami' in an.lower():
+        flags['series'] = 'kiwami'
+    else:
+        flags['series'] = 'その他'
+
+    # Version
+    ver_match = _re.search(r'_(\d{2})\.(jpg|png|mp4)', an)
+    if ver_match:
+        flags['version'] = ver_match.group(1)
+
+    # SWE-specific: appeal code (2-letter code like b6, z5, y7, etc.)
+    appeal_match = _re.search(r'_([a-z]\d)_', an)
+    if appeal_match:
+        code = appeal_match.group(1)
+        # Map known appeal codes
+        appeal_map = {
+            'b': '成分訴求', 'z': '実感訴求', 'y': '価格訴求',
+            'w': '安心訴求', 'k': '機能訴求', 'p': 'パッケージ訴求',
+            'u': 'ユーザー訴求', 'e': 'エビデンス訴求', 'o': 'オファー訴求',
+            'a': 'アクション訴求', 'x': '体験訴求',
+        }
+        flags['appeal'] = appeal_map.get(code[0], f'訴求{code}')
+        flags['appeal_code'] = code
+
+    # SWE-specific: person code (2-letter after appeal like yt, hb, yo, yi, ki, yl)
+    person_match = _re.search(r'_[a-z]\d_([a-z]{2})_', an)
+    if person_match:
+        pcode = person_match.group(1)
+        person_map = {
+            'yt': '男性A', 'hb': '女性A', 'yo': '女性B', 'yi': '男性B',
+            'ki': 'キャラクター', 'yl': '高齢女性', 'ha': '家族',
+            'hj': '夫婦', 'st': 'スタッフ',
+        }
+        flags['person'] = person_map.get(pcode, f'人物{pcode}')
+        flags['person_code'] = pcode
+
+    # SWE-specific: rg=RTG, ng=NonRTG
+    if '_rg_' in an:
+        flags['targeting_type'] = 'RTG'
+    elif '_ng_' in an:
+        flags['targeting_type'] = 'NonRTG'
+
+    return flags
+
+def analyze_creative_flags(df, target_cpa=0):
+    """Analyze which creative flags correlate with good/bad performance."""
+    items = []
+    for ad_name, g in df.groupby('ad_name'):
+        if pd.isna(ad_name) or str(ad_name).strip() == '':
+            continue
+        cost = g['cost'].sum()
+        if cost == 0:
+            continue
+        cv = g['conversion'].sum() if 'conversion' in g.columns else 0
+        click = g['click'].sum()
+        imp = g['impression'].sum()
+        cpa = cost / cv if cv > 0 else 999999
+        cvr = (cv / click * 100) if click > 0 else 0
+        flags = extract_creative_flags(ad_name)
+        flags['ad_name'] = ad_name
+        flags['cost'] = cost
+        flags['cv'] = cv
+        flags['cpa'] = cpa
+        flags['cvr'] = cvr
+        flags['click'] = click
+        flags['is_winner'] = 1 if (cv > 0 and target_cpa > 0 and cpa <= target_cpa) else 0
+        flags['is_loser'] = 1 if (cpa >= target_cpa * 1.3 and target_cpa > 0) else (1 if cv == 0 and cost > 0 else 0)
+        items.append(flags)
+
+    if not items:
+        return {}
+
+    idf = pd.DataFrame(items)
+    result = {}
+
+    for flag_col in ['size', 'aspect', 'format', 'series', 'appeal', 'person']:
+        if flag_col not in idf.columns:
+            continue
+        grp = idf.groupby(flag_col).agg(
+            count=('ad_name', 'count'),
+            total_cost=('cost', 'sum'),
+            total_cv=('cv', 'sum'),
+            winners=('is_winner', 'sum'),
+            losers=('is_loser', 'sum'),
+        ).reset_index()
+        grp['win_rate'] = (grp['winners'] / grp['count'] * 100).round(1)
+        grp['lose_rate'] = (grp['losers'] / grp['count'] * 100).round(1)
+        grp['avg_cpa'] = (grp['total_cost'] / grp['total_cv'].replace(0, float('nan'))).fillna(0)
+        grp['avg_cvr'] = 0  # placeholder
+        grp = grp.sort_values('total_cost', ascending=False)
+        result[flag_col] = grp.to_dict('records')
+
+    return result
+
 def generate_report(report_name, df, color1, color2):
     if len(df) == 0:
         return '<html><body><h1>データなし</h1></body></html>'
@@ -420,7 +553,7 @@ def generate_report(report_name, df, color1, color2):
 <nav class="nav">
   <a href="#summary" class="active">サマリ</a><a href="#monthly">月別</a><a href="#daily">日別</a>
   <a href="#campaign">キャンペーン</a><a href="#adgroup">アドグループ</a><a href="#ad">アド</a>
-  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a><a href="#seisa" style="background:#dc2626;color:#fff;">🔍 精査/抑制</a>
+  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a><a href="#crflags" style="background:#7c3aed;color:#fff;">🏷️ 要素分析</a><a href="#seisa" style="background:#dc2626;color:#fff;">🔍 精査/抑制</a>
 </nav>
 <div class="container">
 
@@ -543,6 +676,15 @@ def generate_report(report_name, df, color1, color2):
   </table></div>
 </section>
 
+<!-- CREATIVE FLAGS -->
+<section id="crflags" class="section">
+  <h2 style="color:#7c3aed;">🏷️ クリエイティブ要素フラグ × 勝率分析</h2>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:14px;padding:10px;background:#f5f3ff;border-radius:8px;border-left:4px solid #7c3aed;">
+    広告名から<strong>サイズ・フォーマット・シリーズ・訴求・人物</strong>を自動抽出し、目標CPA以下を「勝ち」、130%以上を「負け」として勝率を集計。
+  </p>
+  __CRFLAGS_HTML__
+</section>
+
 <!-- SEISA -->
 <section id="seisa" class="section">
   <h2 style="color:#dc2626;">🔍 精査対象ピックアップ</h2>
@@ -588,6 +730,60 @@ new Chart(document.getElementById('devChart'),{type:'bar',data:{labels:__DEVL__,
     # --- Seisa (精査) section ---
     target_cpa = TARGET_CPA_MAP.get(report_name, 0)
     seisa_threshold = target_cpa * 1.3
+    # --- Creative Flag Analysis section ---
+    crflag_data = analyze_creative_flags(df_3m, target_cpa)
+    flag_labels = {
+        'size': '📐 サイズ', 'aspect': '📏 アスペクト比', 'format': '🎬 フォーマット',
+        'series': '🎨 シリーズ', 'appeal': '💬 訴求タイプ', 'person': '👤 人物'
+    }
+    flag_colors = {
+        'size': '#2563eb', 'aspect': '#0891b2', 'format': '#7c3aed',
+        'series': '#c026d3', 'appeal': '#ea580c', 'person': '#16a34a'
+    }
+    crflags_parts = []
+    for flag_key in ['format', 'size', 'series', 'appeal', 'person']:
+        items = crflag_data.get(flag_key, [])
+        if not items:
+            continue
+        lbl = flag_labels.get(flag_key, flag_key)
+        fc = flag_colors.get(flag_key, '#64748b')
+        rows = ''
+        for r in items:
+            total = r['count']
+            win = int(r['winners'])
+            lose = int(r['losers'])
+            winr = r['win_rate']
+            loser = r['lose_rate']
+            avg_cpa_str = fmt_yen(r['avg_cpa']) if r['avg_cpa'] > 0 else '-'
+            # Color-code win rate
+            wr_color = '#16a34a' if winr >= 50 else '#d97706' if winr >= 20 else '#dc2626'
+            lr_color = '#dc2626' if loser >= 50 else '#d97706' if loser >= 30 else '#16a34a'
+            # Bar visualization
+            bar_w = min(winr, 100)
+            bar_l = min(loser, 100)
+            rows += f'''<tr>
+              <td style="font-weight:600;">{r[flag_key]}</td>
+              <td class="num">{total}</td>
+              <td class="num">{fmt_yen(r['total_cost'])}</td>
+              <td class="num">{fmt_num(r['total_cv'])}</td>
+              <td class="num">{avg_cpa_str}</td>
+              <td class="num" style="color:{wr_color};font-weight:700;">{winr}%<div style="background:#dcfce7;border-radius:2px;height:4px;margin-top:2px;"><div style="background:#16a34a;height:4px;width:{bar_w}%;border-radius:2px;"></div></div></td>
+              <td class="num" style="color:{lr_color};font-weight:700;">{loser}%<div style="background:#fee2e2;border-radius:2px;height:4px;margin-top:2px;"><div style="background:#dc2626;height:4px;width:{bar_l}%;border-radius:2px;"></div></div></td>
+            </tr>'''
+        crflags_parts.append(f'''<div style="margin-bottom:20px;">
+          <h3 style="font-size:14px;margin-bottom:8px;color:{fc};">{lbl}</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>{flag_key}</th><th>本数</th><th>費用計</th><th>CV計</th><th>平均CPA</th><th style="color:#16a34a;">勝率</th><th style="color:#dc2626;">負率</th></tr></thead>
+            <tbody>{rows}</tbody>
+          </table></div>
+        </div>''')
+
+    if crflags_parts:
+        crflags_html = '\n'.join(crflags_parts)
+    else:
+        crflags_html = '<p style="color:#94a3b8;">広告名からフラグ情報を抽出できませんでした。</p>'
+    html = html.replace('__CRFLAGS_HTML__', crflags_html)
+
     html = html.replace('__SEISA_TGT__', fmt_yen(target_cpa))
     html = html.replace('__SEISA_THR__', fmt_yen(seisa_threshold))
 
