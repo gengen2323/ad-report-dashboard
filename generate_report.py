@@ -2,8 +2,10 @@
 import pandas as pd
 import json
 import os
+import re
+import calendar
 import warnings
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 warnings.filterwarnings('ignore')
 
 DATA_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -190,15 +192,13 @@ def find_seisa_targets(df, target_cpa, threshold_pct=1.3, min_days=10):
         results[level] = flagged
     return results
 
-import re as _re
-
 def extract_creative_flags(ad_name):
     """Extract visual/content flags from ad_name file naming convention."""
     an = str(ad_name)
     flags = {}
 
     # Size
-    size_match = _re.search(r'(\d{3,4})[x×_](\d{3,4})', an)
+    size_match = re.search(r'(\d{3,4})[x×_](\d{3,4})', an)
     if size_match:
         w, h = int(size_match.group(1)), int(size_match.group(2))
         flags['size'] = f'{w}x{h}'
@@ -235,12 +235,12 @@ def extract_creative_flags(ad_name):
         flags['series'] = 'その他'
 
     # Version
-    ver_match = _re.search(r'_(\d{2})\.(jpg|png|mp4)', an)
+    ver_match = re.search(r'_(\d{2})\.(jpg|png|mp4)', an)
     if ver_match:
         flags['version'] = ver_match.group(1)
 
     # SWE-specific: appeal code (2-letter code like b6, z5, y7, etc.)
-    appeal_match = _re.search(r'_([a-z]\d)_', an)
+    appeal_match = re.search(r'_([a-z]\d)_', an)
     if appeal_match:
         code = appeal_match.group(1)
         # Map known appeal codes
@@ -254,7 +254,7 @@ def extract_creative_flags(ad_name):
         flags['appeal_code'] = code
 
     # SWE-specific: person code (2-letter after appeal like yt, hb, yo, yi, ki, yl)
-    person_match = _re.search(r'_[a-z]\d_([a-z]{2})_', an)
+    person_match = re.search(r'_[a-z]\d_([a-z]{2})_', an)
     if person_match:
         pcode = person_match.group(1)
         person_map = {
@@ -553,7 +553,7 @@ def generate_report(report_name, df, color1, color2):
 <nav class="nav">
   <a href="#summary" class="active">サマリ</a><a href="#monthly">月別</a><a href="#daily">日別</a>
   <a href="#campaign">キャンペーン</a><a href="#adgroup">アドグループ</a><a href="#ad">アド</a>
-  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a><a href="#crflags" style="background:#7c3aed;color:#fff;">🏷️ 要素分析</a><a href="#seisa" style="background:#dc2626;color:#fff;">🔍 精査/抑制</a>
+  <a href="#targeting">ターゲティング</a><a href="#creative">クリエイティブ</a><a href="#priority">優先順位</a><a href="#crflags" style="background:#7c3aed;color:#fff;">🏷️ 要素分析</a><a href="#alerts" style="background:#f59e0b;color:#fff;">⏰ アラート</a><a href="#seisa" style="background:#dc2626;color:#fff;">🔍 精査/抑制</a>
 </nav>
 <div class="container">
 
@@ -676,6 +676,12 @@ def generate_report(report_name, df, color1, color2):
   </table></div>
 </section>
 
+<!-- ALERTS -->
+<section id="alerts" class="section">
+  <h2 style="color:#d97706;">⏰ CPN期限アラート &amp; ADG強化/抑制マップ</h2>
+  __ALERTS_HTML__
+</section>
+
 <!-- CREATIVE FLAGS -->
 <section id="crflags" class="section">
   <h2 style="color:#7c3aed;">🏷️ クリエイティブ要素フラグ × 勝率分析</h2>
@@ -698,6 +704,13 @@ def generate_report(report_name, df, color1, color2):
 </div>
 <script>
 const C=['#1a73e8','#db4437','#f4b400','#0f9d58','#ab47bc','#00acc1','#ff7043','#5c6bc0','#26a69a','#ec407a','#7e57c2','#42a5f5'];
+function downloadSeisaCSV()__LBRACE__
+var data=__EXCEL_DATA__;
+var csv='\\uFEFF"アド名","費用","配信日数","Click","CV","CPA","目標比","CVR"\\n';
+data.forEach(function(r)__LBRACE__csv+='"'+r.join('","')+'"\\n';__RBRACE__);
+var blob=new Blob([csv],__LBRACE__type:'text/csv;charset=utf-8'__RBRACE__);
+var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='seisa_ads_tm_request.csv';a.click();
+__RBRACE__
 function swTab(e,id)__LBRACE__ document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); e.target.classList.add('active'); __RBRACE__
 document.querySelectorAll('.nav a').forEach(a=>__LBRACE__ a.addEventListener('click',function(e)__LBRACE__ e.preventDefault(); document.querySelector(this.getAttribute('href')).scrollIntoView(__LBRACE__behavior:'smooth'__RBRACE__); document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); this.classList.add('active'); __RBRACE__); __RBRACE__);
 </script>
@@ -730,6 +743,163 @@ new Chart(document.getElementById('devChart'),{type:'bar',data:{labels:__DEVL__,
     # --- Seisa (精査) section ---
     target_cpa = TARGET_CPA_MAP.get(report_name, 0)
     seisa_threshold = target_cpa * 1.3
+    # --- Alerts: CPN deadline + ADG strength/suppress map ---
+    alerts_parts = []
+
+    # 1) CPN deadline alerts
+    deadline_alerts = []
+    for cn, g in df.groupby('campaign_name'):
+        cn_str = str(cn)
+        # Detect 【YYMM】 pattern
+        ym_match = re.search(r'【(\d{4})】', cn_str)
+        if ym_match:
+            ym = ym_match.group(1)  # e.g. "2603"
+            yy = int(ym[:2]) + 2000
+            mm = int(ym[2:])
+            # Campaign was created in this month; if it's 2+ months old, flag as potentially expiring
+            last_day = calendar.monthrange(yy, mm)[1]
+            cpn_end = date(yy, mm, last_day)
+            today_date = today.date()
+            days_left = (cpn_end - today_date).days
+
+            is_limited = '期間限定' in cn_str or '限定' in cn_str
+
+            cost = g['cost'].sum()
+            cv = g['conversion'].sum() if 'conversion' in g.columns else 0
+            cpa = cost / cv if cv > 0 else 0
+
+            if is_limited or days_left <= 14:
+                severity = '🔴' if days_left <= 0 else '🟡' if days_left <= 7 else '🟢'
+                status = '期限切れ' if days_left <= 0 else f'残り{days_left}日' if days_left > 0 else '当日'
+                if is_limited:
+                    status = '期間限定 / ' + status
+                deadline_alerts.append({
+                    'name': cn_str, 'ym': ym, 'end': str(cpn_end),
+                    'days_left': days_left, 'severity': severity,
+                    'status': status, 'cost': cost, 'cv': cv, 'cpa': cpa
+                })
+
+    deadline_alerts.sort(key=lambda x: x['days_left'])
+
+    if deadline_alerts:
+        alert_rows = ''
+        for a in deadline_alerts:
+            nm = a['name']
+            if len(nm) > 55:
+                nm = nm[:52] + '...'
+            cpa_str = fmt_yen(a['cpa']) if a['cpa'] > 0 else '-'
+            alert_rows += f'''<tr style="background:{'#fef2f2' if a['days_left']<=0 else '#fffbeb' if a['days_left']<=7 else '#fff'};">
+              <td>{a['severity']}</td>
+              <td title="{a['name']}">{nm}</td>
+              <td class="num" style="font-weight:600;color:{'#dc2626' if a['days_left']<=0 else '#d97706'}">{a['status']}</td>
+              <td class="num">{a['end']}</td>
+              <td class="num">{fmt_yen(a['cost'])}</td>
+              <td class="num">{fmt_num(a['cv'], 0)}</td>
+              <td class="num">{cpa_str}</td>
+            </tr>'''
+        alerts_parts.append(f'''<div style="margin-bottom:24px;">
+          <h3 style="font-size:15px;margin-bottom:10px;color:#d97706;">⏰ キャンペーン期限アラート <span style="background:#fef3c7;color:#d97706;padding:2px 10px;border-radius:6px;font-size:12px;">{len(deadline_alerts)}件</span></h3>
+          <p style="font-size:11px;color:var(--text2);margin-bottom:8px;">【YYMM】パターンから終了月を推定。期間限定CPNと終了間近CPNを自動検知。</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th></th><th>キャンペーン</th><th>ステータス</th><th>終了日</th><th>費用</th><th>CV</th><th>CPA</th></tr></thead>
+            <tbody>{alert_rows}</tbody>
+          </table></div>
+        </div>''')
+    else:
+        alerts_parts.append('<div style="margin-bottom:24px;"><h3 style="font-size:15px;color:#d97706;">⏰ キャンペーン期限アラート</h3><p style="color:#16a34a;font-weight:600;">✅ 期限間近のキャンペーンはありません</p></div>')
+
+    # 2) ADG Strength/Suppress map - visual
+    target_cpa_for_map = TARGET_CPA_MAP.get(report_name, 0)
+    if target_cpa_for_map > 0:
+        ag_items = []
+        for agn, g in df_3w.groupby('adgroup_name'):
+            if pd.isna(agn) or str(agn).strip() == '':
+                continue
+            cost = g['cost'].sum()
+            if cost == 0:
+                continue
+            cv = g['conversion'].sum() if 'conversion' in g.columns else 0
+            click = g['click'].sum()
+            imp = g['impression'].sum()
+            cpa = cost / cv if cv > 0 else 999999
+            cvr = (cv / click * 100) if click > 0 else 0
+            ag_items.append({
+                'name': agn, 'cost': cost, 'cv': cv, 'cpa': cpa, 'cvr': cvr,
+                'click': click, 'imp': imp
+            })
+
+        # Classify: 強化(CPA<target) / 維持(target~130%) / 抑制(>130%) / 停止(CV0, cost>0)
+        strengthen = [a for a in ag_items if a['cv'] > 0 and a['cpa'] <= target_cpa_for_map]
+        maintain = [a for a in ag_items if a['cv'] > 0 and target_cpa_for_map < a['cpa'] <= target_cpa_for_map * 1.3]
+        suppress = [a for a in ag_items if a['cv'] > 0 and a['cpa'] > target_cpa_for_map * 1.3]
+        stop = [a for a in ag_items if a['cv'] == 0 and a['cost'] > 0]
+
+        for lst in [strengthen, maintain, suppress, stop]:
+            lst.sort(key=lambda x: -x['cost'])
+
+        def build_ag_cards(items, color, bg, label, max_items=8):
+            if not items:
+                return f'<p style="color:#94a3b8;font-size:12px;">該当なし</p>'
+            cards = ''
+            for a in items[:max_items]:
+                nm = str(a['name'])
+                if len(nm) > 45:
+                    nm = nm[:42] + '..'
+                cpa_str = fmt_yen(a['cpa']) if a['cpa'] < 900000 else '-'
+                cards += f'<div style="background:{bg};border-radius:6px;padding:6px 8px;margin-bottom:4px;font-size:11px;"><div style="font-weight:600;color:{color};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{a["name"]}">{nm}</div><div style="color:#64748b;">費用{fmt_yen(a["cost"])} CV{fmt_num(a["cv"])} CPA{cpa_str}</div></div>'
+            if len(items) > max_items:
+                cards += f'<div style="font-size:11px;color:#94a3b8;text-align:center;">+{len(items)-max_items}件</div>'
+            return cards
+
+        alerts_parts.append(f'''<div style="margin-bottom:20px;">
+          <h3 style="font-size:15px;margin-bottom:10px;">📊 アドグループ 強化/抑制マップ（3週間実績）</h3>
+          <p style="font-size:11px;color:var(--text2);margin-bottom:10px;">目標CPA {fmt_yen(target_cpa_for_map)} を基準に4分類。配信費用の大きい順に表示。</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+            <div style="border:2px solid #16a34a;border-radius:12px;padding:12px;">
+              <div style="font-size:13px;font-weight:700;color:#16a34a;margin-bottom:8px;">🚀 強化 <span style="background:#dcfce7;padding:1px 6px;border-radius:4px;font-size:11px;">{len(strengthen)}</span></div>
+              <div style="font-size:10px;color:#64748b;margin-bottom:8px;">CPA ≤ 目標</div>
+              {build_ag_cards(strengthen, '#16a34a', '#f0fdf4', '強化')}
+            </div>
+            <div style="border:2px solid #2563eb;border-radius:12px;padding:12px;">
+              <div style="font-size:13px;font-weight:700;color:#2563eb;margin-bottom:8px;">📌 維持 <span style="background:#dbeafe;padding:1px 6px;border-radius:4px;font-size:11px;">{len(maintain)}</span></div>
+              <div style="font-size:10px;color:#64748b;margin-bottom:8px;">目標 &lt; CPA ≤ 130%</div>
+              {build_ag_cards(maintain, '#2563eb', '#eff6ff', '維持')}
+            </div>
+            <div style="border:2px solid #d97706;border-radius:12px;padding:12px;">
+              <div style="font-size:13px;font-weight:700;color:#d97706;margin-bottom:8px;">⚠️ 抑制 <span style="background:#fef3c7;padding:1px 6px;border-radius:4px;font-size:11px;">{len(suppress)}</span></div>
+              <div style="font-size:10px;color:#64748b;margin-bottom:8px;">CPA &gt; 目標130%</div>
+              {build_ag_cards(suppress, '#d97706', '#fffbeb', '抑制')}
+            </div>
+            <div style="border:2px solid #dc2626;border-radius:12px;padding:12px;">
+              <div style="font-size:13px;font-weight:700;color:#dc2626;margin-bottom:8px;">🛑 停止検討 <span style="background:#fee2e2;padding:1px 6px;border-radius:4px;font-size:11px;">{len(stop)}</span></div>
+              <div style="font-size:10px;color:#64748b;margin-bottom:8px;">CV = 0</div>
+              {build_ag_cards(stop, '#dc2626', '#fef2f2', '停止')}
+            </div>
+          </div>
+        </div>''')
+
+    alerts_html = '\n'.join(alerts_parts)
+    html = html.replace('__ALERTS_HTML__', alerts_html)
+
+    # --- Excel export: seisa ads for TM request ---
+    # Generate a JS-based CSV download button embedded in HTML
+    seisa_for_excel = find_seisa_targets(df, target_cpa_for_map) if target_cpa_for_map > 0 else {'ad': []}
+    excel_data = []
+    for r in seisa_for_excel.get('ad', []):
+        cpa_display = str(int(r['cpa'])) if r['cpa'] < 900000 else 'CV無し'
+        excel_data.append([
+            str(r['name']).replace('"', "'"),
+            str(int(r['cost'])),
+            str(r['days']),
+            str(int(r['click'])),
+            str(int(r['cv'])),
+            cpa_display,
+            f"{r['ratio']:.0f}%" if r['cpa'] < 900000 else '-',
+            f"{r['cvr']:.2f}%"
+        ])
+    excel_json = json.dumps(excel_data, ensure_ascii=False)
+    html = html.replace('__EXCEL_DATA__', excel_json)
+
     # --- Creative Flag Analysis section ---
     crflag_data = analyze_creative_flags(df_3m, target_cpa)
     flag_labels = {
@@ -858,7 +1028,9 @@ new Chart(document.getElementById('devChart'),{type:'bar',data:{labels:__DEVL__,
         </div>
         <div style="margin-bottom:24px;">
           <h3 style="font-size:15px;margin-bottom:10px;color:#dc2626;">📝 精査対象アド <span style="background:#fee2e2;color:#dc2626;padding:2px 10px;border-radius:6px;font-size:12px;">{len(ad_items)}件</span></h3>
-          <p style="font-size:11px;color:var(--text2);margin-bottom:8px;">CPA高騰×配信継続中のアド → クリエイティブ差替え or 停止を検討</p>
+          <p style="font-size:11px;color:var(--text2);margin-bottom:8px;">CPA高騰×配信継続中のアド → クリエイティブ差替え or 停止を検討
+            <button onclick="downloadSeisaCSV()" style="margin-left:12px;padding:6px 14px;background:#dc2626;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">📥 TM依頼用Excel(CSV)ダウンロード</button>
+          </p>
           {ad_section}
         </div>
         <div>
